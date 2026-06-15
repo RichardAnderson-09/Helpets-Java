@@ -190,6 +190,7 @@
             .catch(error => console.error('Error al cargar razas:', error));
     }
     
+    
     document.getElementById("formRegistroMascota").addEventListener("submit", function(event) {
         // El navegador ya validó los campos vacíos gracias a los 'required'.
         // Ahora lanzamos la pregunta:
@@ -213,14 +214,21 @@
         }
     }
     
-    <c:if test="${modoEdicion}">
-        <script>
-            // Espera a que la página cargue y abre el modal
-            window.addEventListener('DOMContentLoaded', function() {
-                var modalRegistro = new bootstrap.Modal(document.getElementById('modalMascota'));
-                modalRegistro.show();
-            });
-        </script>
+    // Espera a que la página cargue y abre el modal
+    <c:if test="${modoEdicion}">            
+        window.addEventListener('DOMContentLoaded', function() {
+            var modalRegistro = new bootstrap.Modal(document.getElementById('modalMascota'));
+            modalRegistro.show();
+        });
+    </c:if>
+        
+    <c:if test="${not empty mascotaEdit}">
+        // Le damos un pequeñísimo retraso (100ms) para asegurar que el navegador 
+        // haya terminado de dibujar todo el HTML del Dashboard antes de intentar abrir el modal
+        setTimeout(function() {
+            var miModal = new bootstrap.Modal(document.getElementById('modalMascota'));
+            miModal.show();
+        }, 100);
     </c:if>
 </script>
 

@@ -29,7 +29,7 @@
         </ul>
         <hr class="w-100 text-secondary">
         <div class="pb-4">
-            <a href="../index.jsp" class="text-white text-decoration-none">
+            <a href="${pageContext.request.contextPath}/LoginServlet?accion=logout" class="text-white text-decoration-none">
                 <i class="fs-5 bi-box-arrow-left"></i> <span class="d-none d-sm-inline">Cerrar Sesión</span>
             </a>
         </div>

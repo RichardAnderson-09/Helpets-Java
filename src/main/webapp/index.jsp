@@ -88,21 +88,34 @@
                 </div>
                 
                 <div class="modal-body p-4">
-                    <form action="admin/dashboard.jsp" method="POST">
+                    <form action="${pageContext.request.contextPath}/LoginServlet" method="POST">
                         <div class="mb-3">
-                            <label for="usuario" class="form-label text-muted fw-bold">Correo Electrónico</label>
+                            <label for="usuario" class="form-label text-muted fw-bold">Nombre de Usuario</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                <input type="email" class="form-control" id="usuario" placeholder="ejemplo@helpets.com" required>
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Ej: jyataco" required>
                             </div>
                         </div>
                         <div class="mb-4">
                             <label for="password" class="form-label text-muted fw-bold">Contraseña</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                <input type="password" class="form-control" id="password" placeholder="********" required>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="********" required>
                             </div>
                         </div>
+
+                        <c:if test="${not empty error}">
+                            <div class="alert alert-danger text-center p-2 mb-3" role="alert">
+                                ${error}
+                            </div>
+                            <script>
+                                window.addEventListener('DOMContentLoaded', function() {
+                                    var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                                    loginModal.show();
+                                });
+                            </script>
+                        </c:if>
+
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary fw-bold py-2">Ingresar al Sistema</button>
                         </div>
