@@ -22,7 +22,7 @@
                 </a>
             </li>
             <li class="nav-item w-100 mb-2">
-                <a href="dashboard.jsp?view=adopciones" class="nav-link text-white">
+                <a href="${pageContext.request.contextPath}/AdopcionServlet" class="nav-link text-white">
                     <i class="fs-5 bi-person-lines-fill"></i> <span class="ms-1 d-none d-sm-inline">Adopciones</span>
                 </a>
             </li>

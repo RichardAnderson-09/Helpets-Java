@@ -36,9 +36,9 @@
                     </c:when>
                     
                     <c:when test="${param.view eq 'adopciones'}">
-                        <div class="alert alert-info">Módulo de Adopciones en proceso.</div>
+                        <jsp:include page="adopciones.jsp" />
                     </c:when>
-                        
+                    
                     <c:when test="${param.view eq 'donaciones'}">
                         <jsp:include page="donaciones.jsp" />
                     </c:when>

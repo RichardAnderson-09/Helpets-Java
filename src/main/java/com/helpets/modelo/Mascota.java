@@ -108,6 +108,55 @@ public class Mascota {
         dao.cerrarConexion();
         return exito;
     }
+    
+    // Método exclusivo para el selector de Adopciones (Solo mascotas disponibles)
+    public static List<Mascota> listarMascotasDisponibles() {
+        List<Mascota> lista = new ArrayList<>();
+        GestorDAO dao = new GestorDAO();
+        String sql = "SELECT m.idmascota, m.nombre, e.nombre_especie " +
+                     "FROM mascotas m " +
+                     "INNER JOIN razas r ON m.idraza = r.idraza " +
+                     "INNER JOIN especies e ON r.idespecie = e.idespecie " +
+                     "WHERE m.disponibilidad = '1' ORDER BY m.nombre ASC"; 
+        ResultSet rs = dao.ejecutarSelect(sql);
+        try {
+            while (rs != null && rs.next()) {
+                Mascota m = new Mascota();
+                m.setIdmascota(rs.getInt("idmascota"));
+                m.setNombre(rs.getString("nombre"));
+                m.setNombreEspecie(rs.getString("nombre_especie"));
+                lista.add(m);
+            }
+        } catch (Exception e) {
+            System.err.println("Error en mascotas disponibles: " + e.getMessage());
+        } finally { dao.cerrarConexion(); }
+        return lista;
+    }
+    
+    // Método para el AJAX de adopciones (filtrar por especie)
+    public static List<Mascota> listarMascotasDisponiblesPorEspecie(int idEspecie) {
+        List<Mascota> lista = new ArrayList<>();
+        GestorDAO dao = new GestorDAO();
+        String sql = "SELECT m.idmascota, m.nombre, e.nombre_especie " +
+                     "FROM mascotas m " +
+                     "INNER JOIN razas r ON m.idraza = r.idraza " +
+                     "INNER JOIN especies e ON r.idespecie = e.idespecie " +
+                     "WHERE m.disponibilidad = '1' AND e.idespecie = ? " +
+                     "ORDER BY m.nombre ASC"; 
+        java.sql.ResultSet rs = dao.ejecutarSelect(sql, idEspecie);
+        try {
+            while (rs != null && rs.next()) {
+                Mascota m = new Mascota();
+                m.setIdmascota(rs.getInt("idmascota"));
+                m.setNombre(rs.getString("nombre"));
+                m.setNombreEspecie(rs.getString("nombre_especie"));
+                lista.add(m);
+            }
+        } catch (Exception e) {
+            System.err.println("Error mascotas por especie: " + e.getMessage());
+        } finally { dao.cerrarConexion(); }
+        return lista;
+    }
 
     // --- GETTERS Y SETTERS ---
     public int getIdmascota() { return idmascota; }
