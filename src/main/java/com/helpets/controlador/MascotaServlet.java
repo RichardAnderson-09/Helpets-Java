@@ -11,13 +11,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import com.helpets.modelo.Especie;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.io.OutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebServlet(name = "MascotaServlet", urlPatterns = {"/MascotaServlet"})
 @MultipartConfig // ¡Esta etiqueta es la que permite leer formularios con archivos (fotos)!
 public class MascotaServlet extends HttpServlet {
 
+    private static final Logger logger = LoggerFactory.getLogger(MascotaServlet.class);
 
-    @Override
+@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
@@ -25,45 +31,105 @@ public class MascotaServlet extends HttpServlet {
             String accion = request.getParameter("accion");
             String idParam = request.getParameter("id");
 
-            // 1. Interceptar acciones (Editar / Eliminar)
-            if (accion != null && idParam != null) {
-                int id = Integer.parseInt(idParam);
-
-                if (accion.equals("eliminar")) {
-                    Mascota.eliminarMascota(id);
-                    response.sendRedirect(request.getContextPath() + "/MascotaServlet");
-                    return; 
-                } 
-                if (accion.equals("editar")) {
-                    // Guardamos la mascota temporalmente en la "memoria" de la sesión
-                    request.getSession().setAttribute("mascotaEdit", Mascota.buscarPorId(id));
-                    request.getSession().setAttribute("modoEdicion", true);
+            // 1. Interceptar acciones que vienen por parámetro URL
+            if (accion != null) {
+                
+                // A. ACCIÓN EXPORTAR (No requiere parámetro 'id')
+                if (accion.equals("exportar")) {
+                    logger.info("Iniciando la exportación del catálogo de mascotas a Excel...");
                     
-                    // Redirigimos al mismo Servlet para LIMPIAR la URL del navegador
-                    response.sendRedirect(request.getContextPath() + "/MascotaServlet");
-                    return; // Cortamos el flujo para forzar la redirección
+                    // Uso de try-with-resources para cerrar automáticamente el libro en memoria
+                    try (Workbook workbook = new XSSFWorkbook()) {
+                        List<Mascota> lista = Mascota.listarMascotas();
+                        logger.info("Se recuperaron {} mascotas de la base de datos.", lista.size());
+                        
+                        Sheet sheet = workbook.createSheet("Mascotas Registradas");
+                        
+                        // Crear fila de cabeceras
+                        Row headerRow = sheet.createRow(0);
+                        headerRow.createCell(0).setCellValue("ID");
+                        headerRow.createCell(1).setCellValue("Nombre");
+                        headerRow.createCell(2).setCellValue("Especie");
+                        headerRow.createCell(3).setCellValue("Raza");
+                        headerRow.createCell(4).setCellValue("Sexo");
+                        headerRow.createCell(5).setCellValue("Estado");
+
+                        // Llenar datos de las mascotas
+                        int rowNum = 1;
+                        for (Mascota m : lista) {
+                            Row row = sheet.createRow(rowNum++);
+                            row.createCell(0).setCellValue(m.getIdmascota());
+                            row.createCell(1).setCellValue(m.getNombre());
+                            row.createCell(2).setCellValue(m.getNombreEspecie());
+                            row.createCell(3).setCellValue(m.getNombreRaza());
+                            // Validaciones seguras que evitan NullPointerException
+                            row.createCell(4).setCellValue("M".equals(m.getSexo()) ? "Macho" : "Hembra");
+                            row.createCell(5).setCellValue("1".equals(m.getDisponibilidad()) ? "Disponible" : "Adoptado");
+                        }
+
+                        logger.info("Libro de Excel estructurado correctamente. Preparando descarga...");
+
+                        // Configurar cabeceras HTTP para la descarga de archivos binarios (.xlsx)
+                        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                        response.setHeader("Content-Disposition", "attachment; filename=Reporte_Mascotas.xlsx");
+
+                        // Transmitir el flujo de datos al navegador
+                        try (OutputStream out = response.getOutputStream()) {
+                            workbook.write(out);
+                            logger.info("Archivo Excel enviado al navegador exitosamente.");
+                        }
+                        return; // Cortamos la ejecución del servlet aquí para evitar cargar el HTML/JSP
+                        
+                    } catch (Exception ex) {
+                        logger.error("Error crítico al intentar generar o descargar el Excel: ", ex);
+                        request.getSession().setAttribute("error", "No se pudo exportar el Excel. Revisa los logs.");
+                        response.sendRedirect(request.getContextPath() + "/MascotaServlet");
+                        return;
+                    }
+                }
+                
+                // B. ACCIONES QUE SÍ REQUIEREN UN ID (Eliminar / Editar)
+                if (idParam != null) {
+                    int id = Integer.parseInt(idParam);
+                    
+                    if (accion.equals("eliminar")) {
+                        Mascota.eliminarMascota(id);
+                        response.sendRedirect(request.getContextPath() + "/MascotaServlet");
+                        return; 
+                    } 
+                    
+                    if (accion.equals("editar")) {
+                        // Guardamos la mascota temporalmente en la memoria de la sesión
+                        request.getSession().setAttribute("mascotaEdit", Mascota.buscarPorId(id));
+                        request.getSession().setAttribute("modoEdicion", true);
+                        
+                        // Redirigimos al mismo Servlet para LIMPIAR la URL del navegador (?accion=editar&id=X)
+                        response.sendRedirect(request.getContextPath() + "/MascotaServlet");
+                        return; 
+                    }
                 }
             }
 
-            // 2. Recuperar la mascota si venimos de la redirección limpia
+            // 2. Recuperar la mascota si venimos de la redirección limpia (Modo Edición)
             if (request.getSession().getAttribute("modoEdicion") != null) {
-                // Pasamos los datos de la memoria a la petición actual de la página
+                // Pasamos los datos de la sesión a la petición de la página actual
                 request.setAttribute("mascotaEdit", request.getSession().getAttribute("mascotaEdit"));
                 request.setAttribute("modoEdicion", true);
                 
-                // Borramos la memoria temporal para no quedarnos atascados en modo edición
+                // Borramos la memoria temporal de la sesión para no quedar atrapados en bucle de edición
                 request.getSession().removeAttribute("mascotaEdit");
                 request.getSession().removeAttribute("modoEdicion");
             }
 
-            // 3. Cargar datos base y enviar al Dashboard normal
+            // 3. Cargar datos base y enviar a la vista normal del Dashboard
             request.setAttribute("listaMascotas", Mascota.listarMascotas());
             request.setAttribute("listaEspecies", Especie.listarEspecies());
 
             request.getRequestDispatcher("/admin/dashboard.jsp?view=mascotas").forward(request, response);
 
         } catch (Exception e) {
-            System.err.println("ERROR EN DOGET: " + e.getMessage());
+            // Log profesional en vez de System.err.println
+            logger.error("Error inesperado en el método doGet de MascotaServlet: ", e);
         }
     }
     

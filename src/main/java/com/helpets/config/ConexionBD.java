@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ConexionBD {
-    
+    private static final Logger logger = LoggerFactory.getLogger(ConexionBD.class);
     // 1. Configura tus credenciales (Asegúrate de que el nombre de la BD coincida con el tuyo)
     //private static final String URL = "jdbc:mysql://localhost:3306/helpets_database?useSSL=false&serverTimezone=UTC";
     private static final String URL = "jdbc:mysql://localhost:3306/helpets_database?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
@@ -22,14 +25,12 @@ public class ConexionBD {
             
             // Establecer la conexión
             conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
-            System.out.println("¡Conexión exitosa!");
+            logger.info("¡Conexión exitosa!");
             
         } catch (ClassNotFoundException e) {
-            System.err.println("Error: Faltan las librerías del Driver de MySQL.");
-            e.printStackTrace();
+            logger.error("Error: Faltan las librerías del Driver de MySQL.", e);
         } catch (SQLException e) {
-            System.err.println("Error de conexión.");
-            e.printStackTrace();
+            logger.error("Error de conexión.", e);
         }
         
         return conexion;

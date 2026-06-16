@@ -5,9 +5,15 @@
         <h2 class="fw-bold text-dark">Gestión de Mascotas</h2>
         <p class="text-muted">Administra el catálogo de animales del refugio.</p>
     </div>
-    <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalMascota">
-        <i class="bi bi-plus-circle"></i> Registrar Mascota
-    </button>
+    <div>
+        <a href="${pageContext.request.contextPath}/MascotaServlet?accion=exportar" class="btn btn-success shadow-sm me-2">
+            <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
+        </a>
+    
+        <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalMascota">
+            <i class="bi bi-plus-circle"></i> Registrar Mascota
+        </button>
+    </div>
 </div>
 
 <!-- Listado de mascota -->

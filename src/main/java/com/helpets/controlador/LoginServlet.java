@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.apache.commons.lang3.StringUtils;
 
 @WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
@@ -21,6 +22,15 @@ public class LoginServlet extends HttpServlet {
         // IMPORTANTE: Asegúrate que tus <input> en login.jsp tengan name="usuario" y name="password"
         String userParam = request.getParameter("usuario");
         String passParam = request.getParameter("password");
+        
+        
+        // USO DE APACHE COMMONS: Verifica si es nulo, vacío o solo espacios
+        if (StringUtils.isBlank(userParam) || StringUtils.isBlank(passParam)) {
+            request.setAttribute("error", "Los campos no pueden estar vacíos.");
+            request.getRequestDispatcher("/index.jsp").forward(request, response);
+            return; // Cortamos la ejecución
+        }
+        
         
         // 2. Encriptar la contraseña a SHA-256 para que coincida con la base de datos
         String hashPassword = Encriptador.encriptarSHA256(passParam);
