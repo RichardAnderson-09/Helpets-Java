@@ -17,7 +17,7 @@
                 </a>
             </li>
             <li class="nav-item w-100 mb-2">
-                <a href="dashboard.jsp?view=donaciones" class="nav-link text-white">
+                <a href="${pageContext.request.contextPath}/DonacionServlet" class="nav-link text-white">
                     <i class="fs-5 bi bi-cash-coin""></i> <span class="ms-1 d-none d-sm-inline">Donaciones</span>
                 </a>
             </li>
