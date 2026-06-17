@@ -36,6 +36,11 @@
                     <i class="fs-5 bi bi-heart-pulse"></i> <span class="ms-1 d-none d-sm-inline">Veterinaria</span>
                 </a>
             </li>
+            <li class="nav-item w-100 mb-2">
+                <a href="${pageContext.request.contextPath}/VoluntarioServlet" class="nav-link text-white">
+                    <i class="fs-5 bi bi-people-fill"></i> <span class="ms-1 d-none d-sm-inline">Voluntarios</span>
+                </a>
+            </li>
             
         </ul>
         <hr class="w-100 text-secondary">
