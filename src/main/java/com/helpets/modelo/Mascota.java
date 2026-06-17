@@ -68,7 +68,12 @@ public class Mascota {
     // Método para BUSCAR una sola mascota por su ID (para cargar el formulario de edición)
     public static Mascota buscarPorId(int id) {
         GestorDAO dao = new GestorDAO();
-        String sql = "SELECT * FROM mascotas WHERE idmascota = ?";
+        String sql = "SELECT m.*, e.nombre_especie, r.nombre_raza " +
+                     "FROM mascotas m " +
+                     "INNER JOIN razas r ON m.idraza = r.idraza " +
+                     "INNER JOIN especies e ON r.idespecie = e.idespecie " +
+                     "WHERE m.idmascota = ?";  
+        
         java.sql.ResultSet rs = dao.ejecutarSelect(sql, id);
         try {
             if (rs != null && rs.next()) {
@@ -76,6 +81,8 @@ public class Mascota {
                 m.setIdmascota(rs.getInt("idmascota"));
                 m.setIdraza(rs.getInt("idraza"));
                 m.setNombre(rs.getString("nombre"));
+                m.setNombreEspecie(rs.getString("nombre_especie"));
+                m.setNombreRaza(rs.getString("nombre_raza"));
                 m.setFecharescate(rs.getDate("fecharescate"));
                 m.setDisponibilidad(rs.getString("disponibilidad"));
                 m.setFoto(rs.getString("foto"));
@@ -158,6 +165,16 @@ public class Mascota {
         return lista;
     }
 
+    // Método para Dar de Baja (Fallecimiento)
+    public static boolean darDeBaja(int idmascota) {
+        GestorDAO dao = new GestorDAO();
+        // Cambia vive a 'N' y lo saca de la disponibilidad de adopción
+        String sql = "UPDATE mascotas SET vive = 'N', disponibilidad = '0' WHERE idmascota = ?";
+        boolean exito = dao.ejecutarModificacion(sql, idmascota);
+        dao.cerrarConexion();
+        return exito;
+    }    
+    
     // --- GETTERS Y SETTERS ---
     public int getIdmascota() { return idmascota; }
     public void setIdmascota(int idmascota) { this.idmascota = idmascota; }

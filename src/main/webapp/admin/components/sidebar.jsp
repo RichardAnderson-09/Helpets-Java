@@ -31,6 +31,11 @@
                     <i class="fs-5 bi bi-cart3"></i> <span class="ms-1 d-none d-sm-inline">Compras</span>
                 </a>
             </li>
+            <li class="nav-item w-100 mb-2">
+                <a href="${pageContext.request.contextPath}/VeterinariaServlet" class="nav-link text-white">
+                    <i class="fs-5 bi bi-heart-pulse"></i> <span class="ms-1 d-none d-sm-inline">Veterinaria</span>
+                </a>
+            </li>
             
         </ul>
         <hr class="w-100 text-secondary">
