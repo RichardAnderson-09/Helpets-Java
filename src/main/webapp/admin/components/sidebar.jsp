@@ -41,6 +41,11 @@
                     <i class="fs-5 bi bi-people-fill"></i> <span class="ms-1 d-none d-sm-inline">Voluntarios</span>
                 </a>
             </li>
+            <li class="nav-item w-100 mb-2">
+                <a href="${pageContext.request.contextPath}/InventarioServlet" class="nav-link text-white">
+                    <i class="fs-5 bi bi-box-seam"></i> <span class="ms-1 d-none d-sm-inline"> Inventario</span>
+                </a>
+            </li>
             
         </ul>
         <hr class="w-100 text-secondary">

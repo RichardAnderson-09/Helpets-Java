@@ -55,6 +55,10 @@
                         <jsp:include page="voluntarios.jsp" />
                     </c:when>
                     
+                    <c:when test="${param.view eq 'inventario'}">
+                        <jsp:include page="inventario.jsp" />
+                    </c:when>
+                    
                     <c:otherwise>
                         <jsp:include page="resumen.jsp" />
                     </c:otherwise>
