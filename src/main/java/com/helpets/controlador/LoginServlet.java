@@ -40,17 +40,32 @@ public class LoginServlet extends HttpServlet {
         
         if (usuarioLogueado != null) {
             // CREDENCIALES CORRECTAS
-            // Creamos la sesión y guardamos el objeto del usuario completo
             HttpSession session = request.getSession();
             session.setAttribute("usuarioActivo", usuarioLogueado);
             
-            // Redirigimos al Dashboard Principal
-            response.sendRedirect(request.getContextPath() + "/admin/dashboard.jsp");
+            // REDIRECCIÓN DINÁMICA POR ROLES AL SERVLET CORRECTO
+            int rol = usuarioLogueado.getIdrol();
+            
+            if (rol == 1 || rol == 2) {
+                // Admin o Voluntario van al Resumen general
+                response.sendRedirect(request.getContextPath() + "/ResumenServlet");
+            } else if (rol == 4) {
+                // Usuario común va directo a su vista permitida (Ej. el catálogo a desarrollar)
+                response.sendRedirect(request.getContextPath() + "/CatalogoMascotasServlet"); 
+            } else if (rol == 3) {
+                // Veterinario van a la vista permitida
+                response.sendRedirect(request.getContextPath() + "/VeterinariaServlet");
+            } else {
+                // Por seguridad, si el rol no es reconocido
+                session.invalidate();
+                response.sendRedirect(request.getContextPath() + "/index.jsp");
+            }
         } else {
             // CREDENCIALES INCORRECTAS
             // Mandamos un mensaje de error y recargamos el login
             request.setAttribute("error", "Usuario o contraseña incorrectos.");
-            request.getRequestDispatcher("/index.jsp").forward(request, response);
+            // request.getRequestDispatcher("/index.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/ResumenServlet");
         }
     }
 

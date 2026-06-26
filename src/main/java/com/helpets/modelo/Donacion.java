@@ -99,7 +99,7 @@ public class Donacion {
                     "FROM donaciones d " +
                     "INNER JOIN personas p ON d.idpersona = p.idpersona " +
                     "INNER JOIN detalle_donacion dd ON d.iddonacion = dd.iddonacion " +
-                    "INNER JOIN productos prod ON dd.idproducto = prod.idproducto " +
+                    "LEFT JOIN productos prod ON dd.idproducto = prod.idproducto " +
                     "ORDER BY d.fechadonacion DESC";
                      
         ResultSet rs = dao.ejecutarSelect(sql);
@@ -125,6 +125,50 @@ public class Donacion {
         return lista;
     }
 
+    // Método para registrar Donaciones Monetarias (Usuario Común)
+    public boolean registrarDonacionMonetaria() {
+        Connection con = ConexionBD.getConexion();
+        boolean exito = false;
+        
+        try {
+            con.setAutoCommit(false);
+            
+            // PASO 1: Cabecera de la donación (idusuario e idpersona son el mismo en este caso)
+            String sqlDonacion = "INSERT INTO donaciones (idusuario, idpersona, fechadonacion, tipodonacion) VALUES (?, ?, NOW(), 'MONETARIA')";
+            PreparedStatement psDonacion = con.prepareStatement(sqlDonacion, Statement.RETURN_GENERATED_KEYS);
+            psDonacion.setInt(1, this.idusuario);
+            psDonacion.setInt(2, this.idpersona);
+            psDonacion.executeUpdate();
+            
+            ResultSet rs = psDonacion.getGeneratedKeys();
+            int idDonacionGenerado = 0;
+            if (rs.next()) {
+                idDonacionGenerado = rs.getInt(1);
+            }
+            
+            if (idDonacionGenerado > 0) {
+                // PASO 2: Detalle de la donación (idproducto y cantidad van como NULL, solo va el monto)
+                String sqlDetalle = "INSERT INTO detalle_donacion (iddonacion, idproducto, cantidad, monto) VALUES (?, NULL, NULL, ?)";
+                PreparedStatement psDetalle = con.prepareStatement(sqlDetalle);
+                psDetalle.setInt(1, idDonacionGenerado);
+                psDetalle.setDouble(2, this.monto);
+                psDetalle.executeUpdate();
+                
+                con.commit();
+                exito = true;
+            } else {
+                con.rollback();
+            }
+            
+        } catch (Exception e) {
+            try { if (con != null) con.rollback(); } catch (Exception ex) {}
+            System.err.println("Error en donación monetaria: " + e.getMessage());
+        } finally {
+            try { if (con != null) con.close(); } catch (Exception e) {}
+        }
+        return exito;
+    }
+    
     // --- GETTERS Y SETTERS ---
     public int getIddonacion() { return iddonacion; }
     public void setIddonacion(int iddonacion) { this.iddonacion = iddonacion; }

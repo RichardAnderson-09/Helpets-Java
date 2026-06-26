@@ -175,6 +175,37 @@ public class Mascota {
         return exito;
     }    
     
+    // Método para el Catálogo del Usuario Común
+    public static List<Mascota> listarCatalogoDisponibles() {
+        List<Mascota> lista = new ArrayList<>();
+        GestorDAO dao = new GestorDAO();
+        // Solo traemos mascotas disponibles (1) y vivas (S)
+        String sql = "SELECT m.*, r.nombre_raza, e.nombre_especie " +
+                     "FROM mascotas m " +
+                     "INNER JOIN razas r ON m.idraza = r.idraza " +
+                     "INNER JOIN especies e ON r.idespecie = e.idespecie " +
+                     "WHERE m.disponibilidad = '1' AND m.vive = 'S' " +
+                     "ORDER BY m.fecharescate DESC"; 
+                     
+        java.sql.ResultSet rs = dao.ejecutarSelect(sql);
+        try {
+            while (rs != null && rs.next()) {
+                Mascota m = new Mascota();
+                m.setIdmascota(rs.getInt("idmascota"));
+                m.setNombre(rs.getString("nombre"));
+                m.setFoto(rs.getString("foto"));
+                m.setSexo(rs.getString("sexo"));
+                m.setNombreRaza(rs.getString("nombre_raza"));
+                m.setNombreEspecie(rs.getString("nombre_especie"));
+                m.setFecharescate(rs.getDate("fecharescate"));
+                lista.add(m);
+            }
+        } catch (Exception e) {
+            System.err.println("Error en catálogo mascotas: " + e.getMessage());
+        } finally { dao.cerrarConexion(); }
+        return lista;
+    }
+    
     // --- GETTERS Y SETTERS ---
     public int getIdmascota() { return idmascota; }
     public void setIdmascota(int idmascota) { this.idmascota = idmascota; }

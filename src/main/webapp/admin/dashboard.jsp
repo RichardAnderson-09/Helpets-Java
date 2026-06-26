@@ -63,6 +63,18 @@
                         <jsp:include page="usuarios.jsp" />
                     </c:when>
                     
+                    <c:when test="${param.view eq 'resumen'}">
+                        <jsp:include page="resumen.jsp" />
+                    </c:when>
+                    
+                    <c:when test="${param.view eq 'catalogo'}">
+                        <jsp:include page="catalogo.jsp" />
+                    </c:when>
+                    
+                    <c:when test="${param.view eq 'aporte'}">
+                        <jsp:include page="aporte.jsp" />
+                    </c:when>
+                    
                     <c:otherwise>
                         <jsp:include page="resumen.jsp" />
                     </c:otherwise>
