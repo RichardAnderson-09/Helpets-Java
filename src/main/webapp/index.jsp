@@ -93,7 +93,7 @@
                             <label for="usuario" class="form-label text-muted fw-bold">Nombre de Usuario</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Ej: jyataco" required>
+                                <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Usuario" required>
                             </div>
                         </div>
                         <div class="mb-4">

@@ -2,6 +2,8 @@ package com.helpets.modelo;
 
 import com.helpets.dao.GestorDAO;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Usuario {
     private int idusuario;
@@ -15,6 +17,12 @@ public class Usuario {
     private String apellidosPersona;
     private String nombreRol;
 
+    // NUEVAS variables añadidas para el listado del módulo
+    private String tipodoc;
+    private String nrodoc;
+    private String telefono;
+    private String correo;
+    
     public Usuario() {}
 
     // Método principal para validar credenciales
@@ -53,6 +61,81 @@ public class Usuario {
         return null; // Retorna null si no coincide el usuario o la contraseña
     }
 
+    // 1. Método para REGISTRAR la cuenta
+    public static boolean registrarCuenta(int idPersona, int idRol, String username, String passHash) {
+        GestorDAO dao = new GestorDAO();
+        String sql = "INSERT INTO usuarios (idpersona, idrol, nombreusuario, contraseña, estado) VALUES (?, ?, ?, ?, 'A')";
+        boolean exito = dao.ejecutarModificacion(sql, idPersona, idRol, username, passHash);
+        dao.cerrarConexion();
+        return exito;
+    }
+
+    // 2. Método para LISTAR (Excluyendo a los voluntarios, idrol = 2)
+    public static List<Usuario> listarUsuariosNoVoluntarios() {
+        List<Usuario> lista = new ArrayList<>();
+        GestorDAO dao = new GestorDAO();
+        
+        String sql = "SELECT u.idusuario, p.idpersona, u.idrol, p.nombres, p.apellidos, p.tipodoc, p.nrodoc, p.telefono, p.correo, " +
+                     "u.nombreusuario, u.estado, r.rol " +
+                     "FROM usuarios u " +
+                     "INNER JOIN personas p ON u.idpersona = p.idpersona " +
+                     "INNER JOIN roles r ON u.idrol = r.idrol " +
+                     "WHERE u.idrol != 2 " +
+                     "ORDER BY u.fecharegistro DESC";
+                     
+        ResultSet rs = dao.ejecutarSelect(sql);
+        try {
+            while (rs != null && rs.next()) {
+                Usuario u = new Usuario();
+                u.setIdusuario(rs.getInt("idusuario"));
+                u.setIdpersona(rs.getInt("idpersona"));
+                u.setIdrol(rs.getInt("idrol"));
+                u.setNombresPersona(rs.getString("nombres"));
+                u.setApellidosPersona(rs.getString("apellidos"));
+                u.setTipodoc(rs.getString("tipodoc"));
+                u.setNrodoc(rs.getString("nrodoc"));
+                u.setTelefono(rs.getString("telefono"));
+                u.setCorreo(rs.getString("correo"));
+                u.setNombreusuario(rs.getString("nombreusuario"));
+                u.setEstado(rs.getString("estado"));
+                u.setNombreRol(rs.getString("rol"));
+                lista.add(u);
+            }
+        } catch (Exception e) {
+            System.err.println("Error listar usuarios: " + e.getMessage());
+        } finally { dao.cerrarConexion(); }
+        return lista;
+    }
+
+    // 3. Método para EDITAR (Persona y Usuario)
+    public static boolean actualizarDatosCompletos(int idPersona, int idUsuario, int idRol, String nom, String ape, String tel, String corr, String user, String passHash) {
+        GestorDAO dao = new GestorDAO();
+        
+        String sqlPersona = "UPDATE personas SET nombres=?, apellidos=?, telefono=?, correo=? WHERE idpersona=?";
+        boolean pExito = dao.ejecutarModificacion(sqlPersona, nom, ape, tel, corr, idPersona);
+        
+        boolean uExito;
+        if (passHash != null && !passHash.isEmpty()) {
+            String sqlUserWithPass = "UPDATE usuarios SET idrol=?, nombreusuario=?, contraseña=? WHERE idusuario=?";
+            uExito = dao.ejecutarModificacion(sqlUserWithPass, idRol, user, passHash, idUsuario);
+        } else {
+            String sqlUserOnly = "UPDATE usuarios SET idrol=?, nombreusuario=? WHERE idusuario=?";
+            uExito = dao.ejecutarModificacion(sqlUserOnly, idRol, user, idUsuario);
+        }
+        
+        dao.cerrarConexion();
+        return pExito && uExito;
+    }
+
+    // 4. Método para DAR DE BAJA
+    public static boolean darDeBaja(int idUsuario) {
+        GestorDAO dao = new GestorDAO();
+        String sqlUsuario = "UPDATE usuarios SET estado = 'I', fechabaja = NOW() WHERE idusuario = ?";
+        boolean exito = dao.ejecutarModificacion(sqlUsuario, idUsuario);
+        dao.cerrarConexion();
+        return exito;
+    }
+    
     // Getters y Setters
     public int getIdusuario() { return idusuario; }
     public void setIdusuario(int idusuario) { this.idusuario = idusuario; }
@@ -70,4 +153,12 @@ public class Usuario {
     public void setApellidosPersona(String apellidosPersona) { this.apellidosPersona = apellidosPersona; }
     public String getNombreRol() { return nombreRol; }
     public void setNombreRol(String nombreRol) { this.nombreRol = nombreRol; }
+    public String getTipodoc() { return tipodoc; }
+    public void setTipodoc(String tipodoc) { this.tipodoc = tipodoc; }
+    public String getNrodoc() { return nrodoc; }
+    public void setNrodoc(String nrodoc) { this.nrodoc = nrodoc; }
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
+    public String getCorreo() { return correo; }
+    public void setCorreo(String correo) { this.correo = correo; }
 }

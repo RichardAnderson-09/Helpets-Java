@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import com.helpets.modelo.Especie;
+import com.helpets.modelo.Usuario;
+import jakarta.servlet.http.HttpSession;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.OutputStream;
@@ -26,6 +28,14 @@ public class MascotaServlet extends HttpServlet {
 @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        HttpSession session = request.getSession();
+        Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
+
+        if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
         
         try {
             String accion = request.getParameter("accion");
@@ -136,6 +146,14 @@ public class MascotaServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        HttpSession session = request.getSession();
+        Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
+
+        if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
         
         try {
             // Detectar si es edición o nuevo registro

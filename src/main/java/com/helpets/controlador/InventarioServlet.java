@@ -19,6 +19,14 @@ public class InventarioServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+        HttpSession session = request.getSession();
+        Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
+
+        if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+        
         // 1. Obtener la lista de productos (para llenar la tabla y el ComboBox de la vista)
         // Llama al método que ya tienes en Producto.java
         List<Producto> productos = Producto.listarProductos();
@@ -36,34 +44,46 @@ public class InventarioServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        // Capturar los parámetros enviados por el formulario del JSP
-        int idProducto = Integer.parseInt(request.getParameter("idproducto"));
-        String tipoOperacion = request.getParameter("tipooperacion");
-        int cantidad = Integer.parseInt(request.getParameter("cantidad"));
-        
-        // Obtener el ID del usuario de la sesión actual
         HttpSession session = request.getSession();
-        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuario");
-        int idUsuario = (usuarioLogueado != null) ? usuarioLogueado.getIdusuario() : 1; 
+        Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
 
-        // Llenar el modelo con los datos
-        MovimientoInventario mov = new MovimientoInventario();
-        mov.setIdproducto(idProducto);
-        mov.setIdusuario(idUsuario);
-        mov.setTipooperacion(tipoOperacion);
-        mov.setCantidad(cantidad);
+        if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+        
+        try {
+            String accion = request.getParameter("accion");
+            
+            if ("registrar".equals(accion)) {
+                int idProducto = Integer.parseInt(request.getParameter("idproducto"));
+                String tipoOperacion = request.getParameter("tipooperacion");
+                int cantidad = Integer.parseInt(request.getParameter("cantidad"));
+                
+                // CORRECCIÓN: Nombre correcto de la sesión
+                //HttpSession session = request.getSession();
+                Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioActivo");
+                int idUsuario = (usuarioLogueado != null) ? usuarioLogueado.getIdusuario() : 1; 
 
-        // Llamar al modelo para que se guarde en base de datos y actualice el stock
-        boolean exito = mov.registrarMovimiento();
+                MovimientoInventario mov = new MovimientoInventario();
+                mov.setIdproducto(idProducto);
+                mov.setIdusuario(idUsuario);
+                mov.setTipooperacion(tipoOperacion);
+                mov.setCantidad(cantidad);
 
-        // Evaluar resultado y enviar mensaje de retroalimentación
-        if (exito) {
-            session.setAttribute("mensaje", "Movimiento de inventario procesado correctamente.");
-        } else {
-            session.setAttribute("error", "Hubo un problema al registrar la operación.");
+                boolean exito = mov.registrarMovimiento();
+
+                if (exito) {
+                    session.setAttribute("mensaje", "Movimiento de inventario procesado correctamente.");
+                } else {
+                    session.setAttribute("error", "Hubo un problema al registrar la operación.");
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error al procesar inventario: " + e.getMessage());
         }
 
-        // Redireccionar utilizando PRG (Post/Redirect/Get) para evitar re-envíos
-        response.sendRedirect(request.getContextPath() + "/CompraServlet");
+        // CORRECCIÓN: Redirección al servlet correcto
+        response.sendRedirect(request.getContextPath() + "/InventarioServlet");
     }
 }

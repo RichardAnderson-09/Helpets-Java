@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "CompraServlet", urlPatterns = {"/CompraServlet"})
 public class CompraServlet extends HttpServlet {
@@ -16,6 +17,14 @@ public class CompraServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+       
+        HttpSession session = request.getSession();
+        Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
+
+        if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
         
         request.setAttribute("listaCompras", Compra.listarCompras());
         // Reutilizamos el modelo Producto que ya creamos antes
@@ -28,6 +37,14 @@ public class CompraServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        HttpSession session = request.getSession();
+        Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
+
+        if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+        
         try {
             String accion = request.getParameter("accion");
 

@@ -22,25 +22,45 @@ public class MovimientoInventario {
 
     // Método para REGISTRAR el movimiento y actualizar el stock en cascada
     public boolean registrarMovimiento() {
-        GestorDAO dao = new GestorDAO();
+        // CORRECCIÓN: Evitamos GestorDAO aquí para poder usar Rollback y Commit
+        java.sql.Connection con = com.helpets.config.ConexionBD.getConexion();
+        boolean exito = false;
         
-        // 1. Guardar el movimiento en el historial (Kardex)
-        String sqlInsert = "INSERT INTO movimientos_inventario (idproducto, idusuario, tipooperacion, cantidad) VALUES (?, ?, ?, ?)";
-        boolean exitoMov = dao.ejecutarModificacion(sqlInsert, this.idproducto, this.idusuario, this.tipooperacion, this.cantidad);
-        
-        // 2. Si se guardó correctamente, impactamos el stock de la tabla productos
-        if (exitoMov) {
+        try {
+            con.setAutoCommit(false); // Iniciamos transacción
+            
+            // 1. Guardar el movimiento en el historial (Kardex)
+            String sqlInsert = "INSERT INTO movimientos_inventario (idproducto, idusuario, tipooperacion, cantidad) VALUES (?, ?, ?, ?)";
+            java.sql.PreparedStatement psInsert = con.prepareStatement(sqlInsert);
+            psInsert.setInt(1, this.idproducto);
+            psInsert.setInt(2, this.idusuario);
+            psInsert.setString(3, this.tipooperacion);
+            psInsert.setInt(4, this.cantidad);
+            psInsert.executeUpdate();
+            
+            // 2. Impactamos el stock de la tabla productos
             String sqlUpdateStock = "";
             if (this.tipooperacion.equals("E")) {
                 sqlUpdateStock = "UPDATE productos SET stock = stock + ? WHERE idproducto = ?";
             } else {
                 sqlUpdateStock = "UPDATE productos SET stock = stock - ? WHERE idproducto = ?";
             }
-            dao.ejecutarModificacion(sqlUpdateStock, this.cantidad, this.idproducto);
+            java.sql.PreparedStatement psUpdate = con.prepareStatement(sqlUpdateStock);
+            psUpdate.setInt(1, this.cantidad);
+            psUpdate.setInt(2, this.idproducto);
+            psUpdate.executeUpdate();
+            
+            con.commit(); // Confirmamos transacción
+            exito = true;
+            
+        } catch (Exception e) {
+            try { if (con != null) con.rollback(); } catch (Exception ex) {}
+            System.err.println("Error transaccional en movimiento inventario: " + e.getMessage());
+        } finally {
+            try { if (con != null) con.close(); } catch (Exception e) {}
         }
         
-        dao.cerrarConexion();
-        return exitoMov;
+        return exito;
     }
 
     // Método para LISTAR todos los movimientos con datos extra (para el modal)

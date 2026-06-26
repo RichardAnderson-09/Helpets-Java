@@ -32,7 +32,7 @@
             </div>
             <div class="card-body bg-light">
                 <form action="${pageContext.request.contextPath}/InventarioServlet" method="POST">
-                    
+                    <input type="hidden" name="accion" value="registrar">
                     <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3">Detalles del Movimiento</h6>
                     <div class="row g-2 mb-4">
                         

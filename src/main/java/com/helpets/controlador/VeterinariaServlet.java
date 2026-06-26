@@ -3,12 +3,14 @@ package com.helpets.controlador;
 import com.helpets.modelo.HistorialMedico;
 import com.helpets.modelo.Mascota;
 import com.helpets.modelo.ProcesoMedico;
+import com.helpets.modelo.Usuario;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "VeterinariaServlet", urlPatterns = {"/VeterinariaServlet"})
 public class VeterinariaServlet extends HttpServlet {
@@ -16,6 +18,14 @@ public class VeterinariaServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        HttpSession session = request.getSession();
+        Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
+
+        if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 3)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
         
         String accion = request.getParameter("accion");
 
@@ -53,6 +63,14 @@ public class VeterinariaServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        HttpSession session = request.getSession();
+        Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
+
+        if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 3)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
         
         String accion = request.getParameter("accion");
         

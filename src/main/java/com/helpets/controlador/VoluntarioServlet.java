@@ -2,6 +2,7 @@ package com.helpets.controlador;
 
 import com.helpets.config.Encriptador;
 import com.helpets.modelo.Persona;
+import com.helpets.modelo.Usuario;
 import com.helpets.modelo.Voluntario;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -9,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "VoluntarioServlet", urlPatterns = {"/VoluntarioServlet"})
 public class VoluntarioServlet extends HttpServlet {
@@ -16,6 +18,14 @@ public class VoluntarioServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        HttpSession session = request.getSession();
+        Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
+
+        if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
         
         String accion = request.getParameter("accion");
 
@@ -56,6 +66,14 @@ public class VoluntarioServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        HttpSession session = request.getSession();
+        Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
+
+        if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
         
         String accion = request.getParameter("accion");
         
