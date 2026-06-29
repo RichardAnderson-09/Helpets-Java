@@ -1,13 +1,25 @@
 # Archivos de compilación de Maven
 /target/
+*.jar
+*.war
+
+# Archivos compilados de Java y logs
+*.class
+*.log
 
 # Archivos locales de configuración de NetBeans
-/nbproject/private/
+/nbproject/
 nb-configuration.xml
 nbactions.xml
 
-# Archivos compilados de Java
-*.class
+# Configuraciones de otros IDEs (IntelliJ, Eclipse, VS Code)
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
 
-# Archivos de log
-*.log
+# Archivos del Sistema Operativo
+.DS_Store
+Thumbs.db
