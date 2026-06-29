@@ -27,7 +27,7 @@ public class LoginServlet extends HttpServlet {
         // USO DE APACHE COMMONS: Verifica si es nulo, vacío o solo espacios
         if (StringUtils.isBlank(userParam) || StringUtils.isBlank(passParam)) {
             request.setAttribute("error", "Los campos no pueden estar vacíos.");
-            request.getRequestDispatcher("/index.jsp").forward(request, response);
+            request.getRequestDispatcher("/inicio").forward(request, response);
             return; // Cortamos la ejecución
         }
         
@@ -58,14 +58,13 @@ public class LoginServlet extends HttpServlet {
             } else {
                 // Por seguridad, si el rol no es reconocido
                 session.invalidate();
-                response.sendRedirect(request.getContextPath() + "/index.jsp");
+                response.sendRedirect(request.getContextPath() + "/inicio");
             }
         } else {
             // CREDENCIALES INCORRECTAS
             // Mandamos un mensaje de error y recargamos el login
-            request.setAttribute("error", "Usuario o contraseña incorrectos.");
-            // request.getRequestDispatcher("/index.jsp").forward(request, response);
-            response.sendRedirect(request.getContextPath() + "/ResumenServlet");
+            request.getSession().setAttribute("error", "Usuario o contraseña incorrectos.");
+            response.sendRedirect(request.getContextPath() + "/inicio");
         }
     }
 
@@ -79,9 +78,11 @@ public class LoginServlet extends HttpServlet {
         if ("logout".equals(accion)) {
             HttpSession session = request.getSession();
             session.invalidate(); // Destruye por completo la sesión en el servidor
-            
-            // Redirigimos al index principal
-            response.sendRedirect(request.getContextPath() + "/index.jsp"); 
+            response.sendRedirect(request.getContextPath() + "/inicio");
+        } else {
+            // Si el sistema expulsa al usuario hacia aquí por GET por falta de sesión,
+            // lo mandamos a la página principal para evitar que la vista quede en blanco.
+            response.sendRedirect(request.getContextPath() + "/inicio");
         }
     }
 }

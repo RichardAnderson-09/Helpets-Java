@@ -95,6 +95,7 @@
                             <div class="alert alert-danger text-center p-2 mb-3" role="alert">
                                 ${error}
                             </div>
+                            <c:remove var="error" scope="session" />
                             <script>
                                 window.addEventListener('DOMContentLoaded', function() {
                                     var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
