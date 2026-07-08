@@ -6,8 +6,8 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
-# Compilamos el proyecto (esto genera el archivo .war en la carpeta /app/target/)
-RUN mvn clean package
+# Compilamos el proyecto omitiendo los tests para evitar bloqueos por conexión a BD
+RUN mvn clean package -DskipTests
 
 # ETAPA 2: Entorno de producción con Tomcat
 FROM tomcat:10.1-jdk17
@@ -16,7 +16,6 @@ FROM tomcat:10.1-jdk17
 RUN rm -rf /usr/local/tomcat/webapps/*
 
 # Copiamos el .war desde la ETAPA 1 hacia Tomcat
-# (Uso el mismo nombre de archivo que vi en tu dev.Dockerfile)
 COPY --from=constructor /app/target/helpetsWeb-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
 
 EXPOSE 8080
