@@ -37,7 +37,7 @@ public class Compra {
         try {
             con.setAutoCommit(false); // Iniciamos transacción
             
-            // PASO 1: Insertar Cabecera de Compra
+            // Insertar Cabecera de Compra
             String sqlCompra = "INSERT INTO compras (idusuario, fechacompra, nota) VALUES (?, ?, ?)";
             PreparedStatement psCompra = con.prepareStatement(sqlCompra, Statement.RETURN_GENERATED_KEYS);
             psCompra.setInt(1, this.idusuario);
@@ -52,7 +52,7 @@ public class Compra {
             }
             
             if (idCompraGenerado > 0) {
-                // PASO 2: Insertar Detalle de Compra
+                // Insertar Detalle de Compra
                 String sqlDetalle = "INSERT INTO detalle_compra (idcompra, idproducto, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
                 PreparedStatement psDetalle = con.prepareStatement(sqlDetalle);
                 psDetalle.setInt(1, idCompraGenerado);
@@ -61,7 +61,7 @@ public class Compra {
                 psDetalle.setDouble(4, this.precioUnitario);
                 psDetalle.executeUpdate();
                 
-                // PASO 3: Registrar el Movimiento en el Kardex/Inventario (E = Entrada)
+                // Registrar el Movimiento en el Kardex/Inventario (E = Entrada)
                 String sqlMovimiento = "INSERT INTO movimientos_inventario (idproducto, idusuario, tipooperacion, cantidad) VALUES (?, ?, 'E', ?)";
                 PreparedStatement psMov = con.prepareStatement(sqlMovimiento);
                 psMov.setInt(1, this.idproducto);
@@ -69,7 +69,7 @@ public class Compra {
                 psMov.setInt(3, this.cantidad);
                 psMov.executeUpdate();
                 
-                // PASO 4: Actualizar Stock Real en la tabla Productos
+                // Actualizar Stock Real en la tabla Productos
                 String sqlStock = "UPDATE productos SET stock = stock + ? WHERE idproducto = ?";
                 PreparedStatement psStock = con.prepareStatement(sqlStock);
                 psStock.setInt(1, this.cantidad);

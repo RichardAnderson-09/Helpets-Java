@@ -22,14 +22,14 @@ public class MovimientoInventario {
 
     // Método para REGISTRAR el movimiento y actualizar el stock en cascada
     public boolean registrarMovimiento() {
-        // CORRECCIÓN: Evitamos GestorDAO aquí para poder usar Rollback y Commit
+        // Evitamos GestorDAO aquí para poder usar Rollback y Commit
         java.sql.Connection con = com.helpets.config.ConexionBD.getConexion();
         boolean exito = false;
         
         try {
             con.setAutoCommit(false); // Iniciamos transacción
             
-            // 1. Guardar el movimiento en el historial (Kardex)
+            // Guardar el movimiento en el historial (Kardex)
             String sqlInsert = "INSERT INTO movimientos_inventario (idproducto, idusuario, tipooperacion, cantidad) VALUES (?, ?, ?, ?)";
             java.sql.PreparedStatement psInsert = con.prepareStatement(sqlInsert);
             psInsert.setInt(1, this.idproducto);
@@ -38,7 +38,7 @@ public class MovimientoInventario {
             psInsert.setInt(4, this.cantidad);
             psInsert.executeUpdate();
             
-            // 2. Impactamos el stock de la tabla productos
+            // Impactamos el stock de la tabla productos
             String sqlUpdateStock = "";
             if (this.tipooperacion.equals("E")) {
                 sqlUpdateStock = "UPDATE productos SET stock = stock + ? WHERE idproducto = ?";

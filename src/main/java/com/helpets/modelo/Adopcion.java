@@ -40,7 +40,6 @@ public class Adopcion {
     public static List<Adopcion> listarAdopciones() {
         List<Adopcion> lista = new ArrayList<>();
         GestorDAO dao = new GestorDAO();
-        // Agregué 'a.comentarios' en la primera línea del SELECT
         String sql = "SELECT a.idadopcion, a.fechaadopcion, a.estado_solicitud, a.comentarios, " +
                      "m.nombre AS nombreMascota, CONCAT(p.nombres, ' ', p.apellidos) AS nombreAdoptante, p.telefono " +
                      "FROM adopciones a " +
@@ -55,7 +54,7 @@ public class Adopcion {
                 a.setFechaadopcion(rs.getDate("fechaadopcion"));
                 a.setEstado_solicitud(rs.getString("estado_solicitud"));
                 
-                // ¡Esta es la línea clave que faltaba! Atrapa el comentario de la BD.
+                // Atrapa el comentario de la BD.
                 String coment = rs.getString("comentarios");
                 a.setComentarios(coment != null ? coment : ""); // Si es nulo, lo deja vacío para no imprimir "null"
                 

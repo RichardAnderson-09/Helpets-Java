@@ -3,6 +3,7 @@ package com.helpets.controlador;
 import com.helpets.config.Encriptador;
 import com.helpets.modelo.Persona;
 import com.helpets.modelo.Usuario;
+import com.helpets.modelo.Departamento;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -49,6 +50,7 @@ public class UsuarioServlet extends HttpServlet {
 
         // Flujo normal de carga
         request.setAttribute("listaUsuarios", Usuario.listarUsuariosNoVoluntarios());
+        request.setAttribute("listaDepartamentos", Departamento.listarDepartamentos());
         request.getRequestDispatcher("/admin/dashboard.jsp?view=usuarios").forward(request, response);
     }
 
@@ -67,7 +69,8 @@ public class UsuarioServlet extends HttpServlet {
                 p.setApellidos(request.getParameter("apellidos"));
                 p.setTelefono(request.getParameter("telefono"));
                 p.setCorreo(request.getParameter("correo"));
-                p.setIddistrito("010101"); 
+                String idDistritoSeleccionado = request.getParameter("iddistrito");
+                p.setIddistrito(idDistritoSeleccionado);
                 
                 String fechaNac = request.getParameter("fechanac");
                 if (fechaNac != null && !fechaNac.isEmpty()) {
@@ -75,15 +78,32 @@ public class UsuarioServlet extends HttpServlet {
                 }
                 
                 int idPersonaGenerado = p.registrarYObtenerId(); 
+                int idRol = Integer.parseInt(request.getParameter("idrol"));
                 
-                if (idPersonaGenerado != -1) {
-                    int idRol = Integer.parseInt(request.getParameter("idrol"));
+                if (idPersonaGenerado != -1) {    
                     String user = request.getParameter("nombreusuario");
                     String pass = request.getParameter("contraseña");
                     String hashPass = Encriptador.encriptarSHA256(pass);
                     
                     Usuario.registrarCuenta(idPersonaGenerado, idRol, user, hashPass);
+                    
+                    if (idRol == 4) {
+                        // Guardamos un mensaje de éxito en la sesión
+                        request.getSession().setAttribute("mensajeExito", "¡Registro completado! Ya puedes iniciar sesión para adoptar.");
+
+                        // Redirigimos al inicio. Al recargar la página, el modal de registro aparecerá cerrado.
+                        response.sendRedirect(request.getContextPath() + "/inicio");
+                        return; 
+                    }
+                } else {
+                    if (idRol == 4) {
+                        // En caso de que el DNI o correo ya existan y falle el registro
+                        request.getSession().setAttribute("errorRegistro", "Ocurrió un problema. Verifica que tu DNI o Correo no estén en uso.");
+                        response.sendRedirect(request.getContextPath() + "/inicio");
+                        return;
+                    }
                 }
+                
             }
             
             if ("editar".equals(accion)) {

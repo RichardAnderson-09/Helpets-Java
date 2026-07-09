@@ -208,9 +208,7 @@
 </div>
 
 <script>
-    // -------------------------------------------------------------
-    // 1. LÓGICA DE FILTRADO POR CATEGORÍA (Tomado de tu compra.jsp)
-    // -------------------------------------------------------------
+    // LÓGICA DE FILTRADO POR CATEGORÍA
     var todasLasOpcionesInventario = [];
     
     window.addEventListener('DOMContentLoaded', function() {
@@ -235,9 +233,7 @@
         selectProd.value = ""; 
     }
 
-    // -------------------------------------------------------------
-    // 2. LÓGICA DE FILTRADO PARA EL KARDEX EN EL MODAL
-    // -------------------------------------------------------------
+    // LÓGICA DE FILTRADO PARA EL KARDEX EN EL MODAL
     function filtrarKardex(tipo, boton) {
         // Estilos del botón activo
         var botones = document.querySelectorAll('.btn-filtro');

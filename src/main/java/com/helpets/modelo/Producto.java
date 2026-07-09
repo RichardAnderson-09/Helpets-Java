@@ -23,7 +23,7 @@ public class Producto {
         List<Producto> lista = new ArrayList<>();
         GestorDAO dao = new GestorDAO();
         
-        // Hacemos el SELECT a tu tabla productos, ordenándolos alfabéticamente
+        // Hacemos el SELECT a la tabla productos, ordenándolos alfabéticamente
         String sql = "SELECT idproducto, nombre_producto, descripcion, categoria, stock FROM productos ORDER BY nombre_producto ASC";
         ResultSet rs = dao.ejecutarSelect(sql);
         

@@ -27,16 +27,16 @@ public class InventarioServlet extends HttpServlet {
             return;
         }
         
-        // 1. Obtener la lista de productos (para llenar la tabla y el ComboBox de la vista)
-        // Llama al método que ya tienes en Producto.java
+        // Obtener la lista de productos (para llenar la tabla y el ComboBox de la vista)
+        // Llama al método que ya existe en Producto.java
         List<Producto> productos = Producto.listarProductos();
         request.setAttribute("listaProductos", productos);
         
-        // 2. Obtener el historial completo de los movimientos (Kardex)
+        // Obtener el historial completo de los movimientos (Kardex)
         List<MovimientoInventario> movimientos = MovimientoInventario.listarMovimientos();
         request.setAttribute("listaMovimientos", movimientos);
         
-        // 3. Enviar todo a la vista dividida
+        // Enviar todo a la vista dividida
         request.getRequestDispatcher("/admin/dashboard.jsp?view=inventario").forward(request, response);
     }
 
@@ -60,7 +60,6 @@ public class InventarioServlet extends HttpServlet {
                 String tipoOperacion = request.getParameter("tipooperacion");
                 int cantidad = Integer.parseInt(request.getParameter("cantidad"));
                 
-                // CORRECCIÓN: Nombre correcto de la sesión
                 //HttpSession session = request.getSession();
                 Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioActivo");
                 int idUsuario = (usuarioLogueado != null) ? usuarioLogueado.getIdusuario() : 1; 
@@ -83,7 +82,7 @@ public class InventarioServlet extends HttpServlet {
             System.err.println("Error al procesar inventario: " + e.getMessage());
         }
 
-        // CORRECCIÓN: Redirección al servlet correcto
+        // Redirección al servlet correcto
         response.sendRedirect(request.getContextPath() + "/InventarioServlet");
     }
 }
