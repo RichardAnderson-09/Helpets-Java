@@ -208,9 +208,7 @@
         }
     });
 
-    // -----------------------------------------------------------
-    // 2. Confirmación antes de ELIMINAR
-    // -----------------------------------------------------------
+    // Confirmación antes de ELIMINAR
     function confirmarEliminacion(idMascota) {
         var confirmacion = confirm("¿Estás seguro de eliminar este registro? Esta acción no se puede deshacer.");
         
@@ -221,20 +219,12 @@
     }
     
     // Espera a que la página cargue y abre el modal
-    <c:if test="${modoEdicion}">            
+   <c:if test="${not empty mascotaEdit}">
         window.addEventListener('DOMContentLoaded', function() {
-            var modalRegistro = new bootstrap.Modal(document.getElementById('modalMascota'));
+            var modalElement = document.getElementById('modalMascota');
+            var modalRegistro = bootstrap.Modal.getOrCreateInstance(modalElement);
             modalRegistro.show();
         });
-    </c:if>
-        
-    <c:if test="${not empty mascotaEdit}">
-        // Le damos un pequeñísimo retraso (100ms) para asegurar que el navegador 
-        // haya terminado de dibujar todo el HTML del Dashboard antes de intentar abrir el modal
-        setTimeout(function() {
-            var miModal = new bootstrap.Modal(document.getElementById('modalMascota'));
-            miModal.show();
-        }, 100);
     </c:if>
 </script>
 
@@ -254,6 +244,6 @@
         transform: scale(3.5); /* Aumenta el tamaño 3.5 veces */
         position: relative;
         z-index: 1050; /* Lo pone por encima de todos los demás elementos de la tabla */
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* Le da una pequeña sombra 3D */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* Pequeña sombra 3D */
     }
 </style>

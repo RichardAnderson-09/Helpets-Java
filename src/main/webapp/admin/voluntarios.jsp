@@ -10,6 +10,7 @@
 
 <div class="row g-4">
     
+    <!-- REGISTRAR DE VOLUNTARIOS -->
     <div class="col-lg-4">
         <div class="card shadow-sm border-0">
             <div class="card-header bg-primary text-white fw-bold">
@@ -57,6 +58,27 @@
                             <label class="form-label small fw-semibold">Correo Electrónico</label>
                             <input type="email" id="correo" name="correo" class="form-control form-control-sm">
                         </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted fw-bold">Departamento</label>
+                            <select id="cboDepartamento" class="form-select" required>
+                                <option value="">Seleccione...</option>
+                                <c:forEach var="dep" items="${listaDepartamentos}">
+                                    <option value="${dep.iddepartamento}">${dep.departamento}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted fw-bold">Provincia</label>
+                            <select id="cboProvincia" class="form-select" required disabled>
+                                <option value="">Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted fw-bold">Distrito</label>
+                            <select id="cboDistrito" name="iddistrito" class="form-select" required disabled>
+                                <option value="">Seleccione...</option>
+                            </select>
+                        </div>
                     </div>
 
                     <h6 class="fw-bold text-secondary border-bottom pb-2 mb-3">2. Cuenta y Periodo</h6>
@@ -73,10 +95,6 @@
                             <label class="form-label small fw-semibold">Fecha de Inicio</label>
                             <input type="date" name="fechainicio" class="form-control form-control-sm" required>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-semibold">Fecha Fin (Opcional)</label>
-                            <input type="date" name="fechafin" class="form-control form-control-sm">
-                        </div>
                     </div>
 
                     <div class="d-grid mt-3">
@@ -88,7 +106,8 @@
             </div>
         </div>
     </div>
-
+                   
+    <!-- LISTA DE VOLUNTARIOS -->
     <div class="col-lg-8">
         <div class="card shadow-sm border-0">
             <div class="card-header bg-dark text-white fw-bold">
@@ -154,6 +173,7 @@
     </div>
 </div>
 
+<!-- MODAL MODIFICACION VOLUNTARIO -->
 <div class="modal fade" id="modalEditarVoluntario" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content border-0 shadow">
@@ -203,7 +223,7 @@
 
 <script>
     // Buscador asíncrono reutilizado
-     ChilfFunciona = false;
+    ChilfFunciona = false;
     function buscarPersonaAsincrona() {
         var tipo = document.getElementById("tipodoc").value;
         var nro = document.getElementById("nrodoc").value;
@@ -250,4 +270,60 @@
             window.location.href = "${pageContext.request.contextPath}/VoluntarioServlet?accion=darDeBaja&idhistorialvol=" + idHistorial + "&idusuario=" + idUsuario;
         }
     }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const cboDep = document.getElementById('cboDepartamento');
+        const cboProv = document.getElementById('cboProvincia');
+        const cboDist = document.getElementById('cboDistrito');
+
+        // Cuando se cambia al Departamento
+        cboDep.addEventListener('change', function() {
+            const idDep = this.value;
+
+            // Limpiamos y bloqueamos los siguientes combos
+            cboProv.innerHTML = '<option value="">Seleccione...</option>';
+            cboDist.innerHTML = '<option value="">Seleccione...</option>';
+            cboProv.disabled = true;
+            cboDist.disabled = true;
+
+            if (idDep) {
+                // Hacemos la petición al Servlet que crearemos
+                fetch('${pageContext.request.contextPath}/UbigeoServlet?accion=provincias&iddepartamento=' + idDep)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value = p.id;
+                        opt.textContent = p.nombre;
+                        cboProv.appendChild(opt);
+                    });
+                    cboProv.disabled = false; // Habilitamos la provincia
+                })
+                .catch(err => console.error("Error cargando provincias:", err));
+            }
+        });
+
+        // Cuando cambia la Provincia
+        cboProv.addEventListener('change', function() {
+            const idProv = this.value;
+
+            cboDist.innerHTML = '<option value="">Seleccione...</option>';
+            cboDist.disabled = true;
+
+            if (idProv) {
+                fetch('${pageContext.request.contextPath}/UbigeoServlet?accion=distritos&idprovincia=' + idProv)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(d => {
+                        const opt = document.createElement('option');
+                        opt.value = d.id;
+                        opt.textContent = d.nombre;
+                        cboDist.appendChild(opt);
+                    });
+                    cboDist.disabled = false; // Habilitamos el distrito
+                })
+                .catch(err => console.error("Error cargando distritos:", err));
+            }
+        });
+    });
 </script>

@@ -22,7 +22,7 @@ public class CompraServlet extends HttpServlet {
         Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
 
         if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/inicio");
             return;
         }
         
@@ -41,14 +41,14 @@ public class CompraServlet extends HttpServlet {
         Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
 
         if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/inicio");
             return;
         }
         
         try {
             String accion = request.getParameter("accion");
 
-            // 1. NUEVA ACCIÓN AJAX PARA CREAR PRODUCTOS DESDE EL MODAL EN COMPRAS
+            // ACCIÓN AJAX PARA CREAR PRODUCTOS DESDE EL MODAL EN COMPRAS
             if ("registrarProducto".equals(accion)) {
                 String nombre = request.getParameter("nombre_producto");
                 String categoria = request.getParameter("categoria");
@@ -73,7 +73,7 @@ public class CompraServlet extends HttpServlet {
                 return; // Cortamos la ejecución para no redirigir
             }
 
-            // 2. LÓGICA NORMAL DE REGISTRO DE COMPRAS
+            // LÓGICA NORMAL DE REGISTRO DE COMPRAS
             if ("registrar".equals(accion)) {
                 Usuario usuarioLogueado = (Usuario) request.getSession().getAttribute("usuarioActivo");
 

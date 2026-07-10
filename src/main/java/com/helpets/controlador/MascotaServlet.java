@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @WebServlet(name = "MascotaServlet", urlPatterns = {"/MascotaServlet"})
-@MultipartConfig // ¡Esta etiqueta es la que permite leer formularios con archivos (fotos)!
+@MultipartConfig // ¡Esta etiqueta es la que permite leer formularios con archivos (fotos)
 public class MascotaServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(MascotaServlet.class);
@@ -33,7 +33,7 @@ public class MascotaServlet extends HttpServlet {
         Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
 
         if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/inicio");
             return;
         }
         
@@ -44,7 +44,7 @@ public class MascotaServlet extends HttpServlet {
             // 1. Interceptar acciones que vienen por parámetro URL
             if (accion != null) {
                 
-                // A. ACCIÓN EXPORTAR (No requiere parámetro 'id')
+                // ACCIÓN EXPORTAR (No requiere parámetro 'id')
                 if (accion.equals("exportar")) {
                     logger.info("Iniciando la exportación del catálogo de mascotas a Excel...");
                     
@@ -98,7 +98,7 @@ public class MascotaServlet extends HttpServlet {
                     }
                 }
                 
-                // B. ACCIONES QUE SÍ REQUIEREN UN ID (Eliminar / Editar)
+                // ACCIONES QUE SÍ REQUIEREN UN ID (Eliminar / Editar)
                 if (idParam != null) {
                     int id = Integer.parseInt(idParam);
                     
@@ -120,7 +120,7 @@ public class MascotaServlet extends HttpServlet {
                 }
             }
 
-            // 2. Recuperar la mascota si venimos de la redirección limpia (Modo Edición)
+            // Recuperar la mascota si venimos de la redirección limpia (Modo Edición)
             if (request.getSession().getAttribute("modoEdicion") != null) {
                 // Pasamos los datos de la sesión a la petición de la página actual
                 request.setAttribute("mascotaEdit", request.getSession().getAttribute("mascotaEdit"));
@@ -131,14 +131,13 @@ public class MascotaServlet extends HttpServlet {
                 request.getSession().removeAttribute("modoEdicion");
             }
 
-            // 3. Cargar datos base y enviar a la vista normal del Dashboard
+            // Cargar datos base y enviar a la vista normal del Dashboard
             request.setAttribute("listaMascotas", Mascota.listarMascotas());
             request.setAttribute("listaEspecies", Especie.listarEspecies());
 
             request.getRequestDispatcher("/admin/dashboard.jsp?view=mascotas").forward(request, response);
 
         } catch (Exception e) {
-            // Log profesional en vez de System.err.println
             logger.error("Error inesperado en el método doGet de MascotaServlet: ", e);
         }
     }
@@ -151,7 +150,7 @@ public class MascotaServlet extends HttpServlet {
         Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
 
         if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/inicio");
             return;
         }
         

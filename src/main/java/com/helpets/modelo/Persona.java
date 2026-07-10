@@ -19,7 +19,7 @@ public class Persona {
     public int registrarYObtenerId() {
         GestorDAO dao = new GestorDAO();
         
-        // 1. Verificamos si la persona ya existe en el sistema por su DNI
+        // Verificamos si la persona ya existe en el sistema por su DNI
         String sqlCheck = "SELECT idpersona FROM personas WHERE tipodoc = ? AND nrodoc = ?";
         ResultSet rs = dao.ejecutarSelect(sqlCheck, this.tipodoc, this.nrodoc);
         try {
@@ -30,11 +30,11 @@ public class Persona {
             }
         } catch(Exception e) {}
 
-        // 2. Si no existe, lo insertamos
+        // Si no existe, lo insertamos
         String sqlInsert = "INSERT INTO personas (nombres, apellidos, fechanac, tipodoc, nrodoc, telefono, correo, iddistrito) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         boolean exito = dao.ejecutarModificacion(sqlInsert, this.nombres, this.apellidos, this.fechanac, this.tipodoc, this.nrodoc, this.telefono, this.correo, this.iddistrito);
         
-        // 3. Rescatamos el ID recién creado
+        // Rescatamos el ID recién creado
         if (exito) {
             rs = dao.ejecutarSelect(sqlCheck, this.tipodoc, this.nrodoc);
             try {

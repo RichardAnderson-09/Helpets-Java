@@ -4,6 +4,7 @@ import com.helpets.config.Encriptador;
 import com.helpets.modelo.Persona;
 import com.helpets.modelo.Usuario;
 import com.helpets.modelo.Voluntario;
+import com.helpets.modelo.Departamento;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,7 +24,7 @@ public class VoluntarioServlet extends HttpServlet {
         Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
 
         if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/inicio");
             return;
         }
         
@@ -60,6 +61,7 @@ public class VoluntarioServlet extends HttpServlet {
 
         // Flujo normal de carga
         request.setAttribute("listaVoluntarios", Voluntario.listarVoluntarios());
+        request.setAttribute("listaDepartamentos", Departamento.listarDepartamentos());
         request.getRequestDispatcher("/admin/dashboard.jsp?view=voluntarios").forward(request, response);
     }
 
@@ -71,7 +73,7 @@ public class VoluntarioServlet extends HttpServlet {
         Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
 
         if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/inicio");
             return;
         }
         
@@ -97,7 +99,7 @@ public class VoluntarioServlet extends HttpServlet {
                 int idPersona = p.registrarYObtenerId();
                 
                 if (idPersona != -1) {
-                    // 2. Cuentas e Historial
+                    // Cuentas e Historial
                     String user = request.getParameter("nombreusuario");
                     String pass = request.getParameter("contraseña");
                     String hashPass = Encriptador.encriptarSHA256(pass);
@@ -111,7 +113,7 @@ public class VoluntarioServlet extends HttpServlet {
             }
             
             if ("registrar".equals(accion)) {
-                // 1. Obtenemos datos de la Persona
+                // Obtenemos datos de la Persona
                 Persona p = new Persona();
                 p.setTipodoc(request.getParameter("tipodoc"));
                 p.setNrodoc(request.getParameter("nrodoc"));
@@ -119,18 +121,18 @@ public class VoluntarioServlet extends HttpServlet {
                 p.setApellidos(request.getParameter("apellidos"));
                 p.setTelefono(request.getParameter("telefono"));
                 p.setCorreo(request.getParameter("correo"));
-                p.setIddistrito("010101"); // Reemplazar según tu lógica
+                p.setIddistrito("010101");
                 
                 String fechaNac = request.getParameter("fechanac");
                 if (fechaNac != null && !fechaNac.isEmpty()) {
                     p.setFechanac(java.sql.Date.valueOf(fechaNac));
                 }
                 
-                // AQUÍ OCURRE LA MAGIA: Guardamos la persona y obtenemos su ID
+                // Guardamos la persona y obtenemos su ID
                 int idPersonaGenerado = p.registrarYObtenerId(); 
                 
                 if (idPersonaGenerado != -1) {
-                    // 2. Extraemos los datos de las fechas de inicio para el historial
+                    // Extraemos los datos de las fechas de inicio para el historial
                     String user = request.getParameter("nombreusuario");
                     String pass = request.getParameter("contraseña");
                     String hashPass = Encriptador.encriptarSHA256(pass);
@@ -139,7 +141,7 @@ public class VoluntarioServlet extends HttpServlet {
                     String fFinStr = request.getParameter("fechafin");
                     java.sql.Date fFin = (fFinStr != null && !fFinStr.isEmpty()) ? java.sql.Date.valueOf(fFinStr) : null;
                     
-                    // 3. Enviamos el ID de la persona y la fecha de inicio para guardar en historialvol
+                    // Enviamos el ID de la persona y la fecha de inicio para guardar en historialvol
                     Voluntario.registrarCuentaYHistorial(idPersonaGenerado, user, hashPass, fInicio, fFin);
                 }
             }

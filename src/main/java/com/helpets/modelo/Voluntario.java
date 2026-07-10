@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Voluntario {
-    private int idhistorial; // Corregido: Según tu BD es idhistorial
+    private int idhistorial; 
     private int idpersona;
     private int idusuario;
     private String nombres;
@@ -23,16 +23,16 @@ public class Voluntario {
 
     public Voluntario() {}
 
-    // MÉTODO ESTRELLA: Aquí se crea la cuenta y el historial al mismo tiempo
+    // Aquí se crea la cuenta y el historial al mismo tiempo
     public static boolean registrarCuentaYHistorial(int idPersona, String username, String passHash, Date fechaInicio, Date fechaFin) {
         GestorDAO dao = new GestorDAO();
         
-        // 1. Insertar en la tabla usuarios (Estado 'A' por defecto según BD)
+        // Insertar en la tabla usuarios (Estado 'A' por defecto según BD)
         String sqlUsuario = "INSERT INTO usuarios (idpersona, idrol, nombreusuario, contraseña, estado) VALUES (?, 3, ?, ?, 'A')";
         boolean uExito = dao.ejecutarModificacion(sqlUsuario, idPersona, username, passHash);
         
         if (uExito) {
-            // 2. Insertar en la tabla historialvol vinculando a la misma persona (Estado 'A')
+            // Insertar en la tabla historialvol vinculando a la misma persona (Estado 'A')
             String sqlHistorial = "INSERT INTO historialvol (idpersona, fechainicio, fechafin, estado) VALUES (?, ?, ?, 'A')";
             boolean hExito = dao.ejecutarModificacion(sqlHistorial, idPersona, fechaInicio, fechaFin);
             dao.cerrarConexion();
@@ -46,7 +46,6 @@ public class Voluntario {
     public static List<Voluntario> listarVoluntarios() {
         List<Voluntario> lista = new ArrayList<>();
         GestorDAO dao = new GestorDAO();
-        // Corregido el campo h.idhistorial
         String sql = "SELECT h.idhistorial, p.idpersona, u.idusuario, p.nombres, p.apellidos, p.tipodoc, p.nrodoc, p.telefono, p.correo, " +
                      "u.nombreusuario, h.fechainicio, h.fechafin, h.estado AS estado_vol " +
                      "FROM historialvol h " +
@@ -97,15 +96,15 @@ public class Voluntario {
         return false;
     }
     
-        // Modificar datos personales, cuenta de usuario y contraseña (opcional)
+        // Modificar datos personales, cuenta de usuario y contraseña
     public static boolean actualizarDatosCompletos(int idPersona, int idUsuario, String nom, String ape, String tel, String corr, String user, String passHash) {
         GestorDAO dao = new GestorDAO();
         
-        // 1. Actualizar Persona
+        // Actualizar Persona
         String sqlPersona = "UPDATE personas SET nombres=?, apellidos=?, telefono=?, correo=? WHERE idpersona=?";
         boolean pExito = dao.ejecutarModificacion(sqlPersona, nom, ape, tel, corr, idPersona);
         
-        // 2. Actualizar Usuario
+        // Actualizar Usuario
         boolean uExito;
         if (passHash != null && !passHash.isEmpty()) {
             String sqlUserWithPass = "UPDATE usuarios SET nombreusuario=?, contraseña=? WHERE idusuario=?";

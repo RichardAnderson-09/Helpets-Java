@@ -17,7 +17,7 @@ public class Usuario {
     private String apellidosPersona;
     private String nombreRol;
 
-    // NUEVAS variables añadidas para el listado del módulo
+    // variables añadidas para el listado del módulo
     private String tipodoc;
     private String nrodoc;
     private String telefono;
@@ -61,7 +61,7 @@ public class Usuario {
         return null; // Retorna null si no coincide el usuario o la contraseña
     }
 
-    // 1. Método para REGISTRAR la cuenta
+    // Método para REGISTRAR la cuenta
     public static boolean registrarCuenta(int idPersona, int idRol, String username, String passHash) {
         GestorDAO dao = new GestorDAO();
         String sql = "INSERT INTO usuarios (idpersona, idrol, nombreusuario, contraseña, estado) VALUES (?, ?, ?, ?, 'A')";
@@ -70,7 +70,7 @@ public class Usuario {
         return exito;
     }
 
-    // 2. Método para LISTAR (Excluyendo a los voluntarios, idrol = 2)
+    // Método para LISTAR (Excluyendo a los voluntarios, idrol = 2)
     public static List<Usuario> listarUsuariosNoVoluntarios() {
         List<Usuario> lista = new ArrayList<>();
         GestorDAO dao = new GestorDAO();
@@ -107,7 +107,7 @@ public class Usuario {
         return lista;
     }
 
-    // 3. Método para EDITAR (Persona y Usuario)
+    // Método para EDITAR (Persona y Usuario)
     public static boolean actualizarDatosCompletos(int idPersona, int idUsuario, int idRol, String nom, String ape, String tel, String corr, String user, String passHash) {
         GestorDAO dao = new GestorDAO();
         
@@ -127,7 +127,7 @@ public class Usuario {
         return pExito && uExito;
     }
 
-    // 4. Método para DAR DE BAJA
+    // Método para DAR DE BAJA
     public static boolean darDeBaja(int idUsuario) {
         GestorDAO dao = new GestorDAO();
         String sqlUsuario = "UPDATE usuarios SET estado = 'I', fechabaja = NOW() WHERE idusuario = ?";

@@ -25,13 +25,13 @@ public class AdopcionServlet extends HttpServlet {
         Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
 
         if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/inicio");
             return;
         }
         
         String accion = request.getParameter("accion");
 
-        // 1. AJAX: Buscador de Personas (El que ya agregaste)
+        // AJAX: Buscador de Personas
         if ("buscarPersona".equals(accion)) {
             String tipodoc = request.getParameter("tipodoc");
             String nrodoc = request.getParameter("nrodoc");
@@ -54,7 +54,7 @@ public class AdopcionServlet extends HttpServlet {
             return;
         }
 
-        // 2. AJAX: Filtrar Mascotas por Especie
+        // AJAX: Filtrar Mascotas por Especie
         if ("cargarMascotas".equals(accion)) {
             String idEspecieStr = request.getParameter("idespecie");
             response.setContentType("text/html;charset=UTF-8");
@@ -73,7 +73,7 @@ public class AdopcionServlet extends HttpServlet {
             return;
         }
 
-        // 3. Flujo normal (Cargar Vistas)
+        // (Cargar Vistas
         request.setAttribute("listaAdopciones", Adopcion.listarAdopciones());
         request.setAttribute("listaEspecies", Especie.listarEspecies()); // Añadimos las especies
         
@@ -88,7 +88,7 @@ public class AdopcionServlet extends HttpServlet {
         Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
 
         if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/inicio");
             return;
         }
         
@@ -96,7 +96,7 @@ public class AdopcionServlet extends HttpServlet {
             String accion = request.getParameter("accion");
             
             if ("registrar".equals(accion)) {
-                // 1. Armamos el objeto Persona con los datos del formulario
+                // Armamos el objeto Persona con los datos del formulario
                 Persona p = new Persona();
                 p.setTipodoc(request.getParameter("tipodoc"));
                 p.setNrodoc(request.getParameter("nrodoc"));
@@ -114,7 +114,7 @@ public class AdopcionServlet extends HttpServlet {
                 int idPersona = p.registrarYObtenerId();
                 
                 if (idPersona != -1) {
-                    // 2. Armamos la Adopción
+                    // Armamos la Adopción
                     Usuario usuarioLogueado = (Usuario) request.getSession().getAttribute("usuarioActivo");
                     
                     Adopcion a = new Adopcion();
@@ -130,7 +130,7 @@ public class AdopcionServlet extends HttpServlet {
                 }
             }
                 
-            // Nuevo bloque para capturar la actualización de estado
+            // Bloque para capturar la actualización de estado
             if ("actualizarEstado".equals(accion)) {
                 Adopcion a = new Adopcion();
                 a.setIdadopcion(Integer.parseInt(request.getParameter("idadopcion")));
@@ -144,7 +144,7 @@ public class AdopcionServlet extends HttpServlet {
             System.err.println("Error al procesar adopción: " + e.getMessage());
         }
         
-        // Redirigimos en limpio para evitar reenvío de formulario (F5)
+        // Redirigimos en limpio para evitar reenvío de formulario
         response.sendRedirect(request.getContextPath() + "/AdopcionServlet");
     }
 }

@@ -172,7 +172,7 @@
     </div>
 </div>
                     
-                    <div class="modal fade" id="modalNuevoProducto" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalNuevoProducto" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <div class="modal-header bg-primary text-white">
@@ -254,16 +254,16 @@
         .then(response => response.json())
         .then(data => {
             if (data.exito) {
-                // 1. Instanciamos la nueva opción dinámica en memoria
+                // Instanciamos la nueva opción dinámica en memoria
                 var nuevaOpt = document.createElement("option");
                 nuevaOpt.value = data.idproducto;
                 nuevaOpt.text = data.nombre;
                 nuevaOpt.setAttribute("data-categoria", data.categoria);
 
-                // 2. Insertamos la opción en nuestro arreglo global de respaldo para persistirla
+                // Insertamos la opción en nuestro arreglo global de respaldo para persistirla
                 todasLasOpcionesProductos.push(nuevaOpt);
 
-                // 3. Si coincide con el filtro activo en pantalla (o el filtro está vacío), lo agregamos visualmente
+                // Si coincide con el filtro activo en pantalla (o el filtro está vacío), lo agregamos visualmente
                 var catFiltroActual = document.getElementById("categoriaFiltro").value;
                 if (catFiltroActual === "" || catFiltroActual === data.categoria) {
                     var selectProd = document.getElementById("idproducto");

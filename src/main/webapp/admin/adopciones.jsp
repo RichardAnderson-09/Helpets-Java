@@ -255,17 +255,17 @@
     }
     
     function abrirModalEstado(boton) {
-        // 1. Extraemos los datos que escondimos en el botón
+        // Extraemos los datos
         var id = boton.getAttribute('data-id');
         var estado = boton.getAttribute('data-estado');
         var comentario = boton.getAttribute('data-comentario');
         
-        // 2. Inyectamos la información en los inputs del Modal
+        // Inyectamos la información en los inputs del Modal
         document.getElementById('modalIdAdopcion').value = id;
         document.getElementById('modalSelectEstado').value = estado;
         document.getElementById('modalComentarios').value = comentario;
         
-        // 3. Forzamos a que el modal aparezca en pantalla
+        // Forzamos a que el modal aparezca en pantalla
         var modal = new bootstrap.Modal(document.getElementById('modalEstado'));
         modal.show();
     }
@@ -304,12 +304,12 @@
     }
     
     function abrirModalEstado(boton) {
-        // 1. Extraemos los datos que escondimos en el botón
+        // Extraemos los datos
         var id = boton.getAttribute('data-id');
         var estado = boton.getAttribute('data-estado');
         var comentario = boton.getAttribute('data-comentario');
         
-        // 2. Inyectamos la información en los inputs del Modal
+        // Inyectamos la información en los inputs del Modal
         document.getElementById('modalIdAdopcion').value = id;
         
         var selectEstado = document.getElementById('modalSelectEstado');
@@ -317,14 +317,14 @@
         
         document.getElementById('modalComentarios').value = comentario;
         
-        // 3. Lógica de bloqueo (Si es Aprobado 'A' o Rechazado 'R')
+        // Lógica de bloqueo (Si es Aprobado 'A' o Rechazado 'R')
         if (estado === 'A' || estado === 'R') {
             selectEstado.disabled = true;
         } else {
             selectEstado.disabled = false; // Nos aseguramos de habilitarlo si abren uno pendiente
         }
         
-        // 4. Forzamos a que el modal aparezca en pantalla
+        // Forzamos a que el modal aparezca en pantalla
         var modal = new bootstrap.Modal(document.getElementById('modalEstado'));
         modal.show();
     }

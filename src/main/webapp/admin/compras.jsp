@@ -197,7 +197,7 @@
         params.append("nombre_producto", nombre);
         params.append("categoria", categoria);
         
-        // ¡Importante! Aquí apuntamos a CompraServlet
+        // Aquí apuntamos a CompraServlet
         fetch("${pageContext.request.contextPath}/CompraServlet", {
             method: "POST",
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
