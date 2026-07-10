@@ -219,20 +219,12 @@
     }
     
     // Espera a que la página cargue y abre el modal
-    <c:if test="${modoEdicion}">            
+   <c:if test="${not empty mascotaEdit}">
         window.addEventListener('DOMContentLoaded', function() {
-            var modalRegistro = new bootstrap.Modal(document.getElementById('modalMascota'));
+            var modalElement = document.getElementById('modalMascota');
+            var modalRegistro = bootstrap.Modal.getOrCreateInstance(modalElement);
             modalRegistro.show();
         });
-    </c:if>
-        
-    <c:if test="${not empty mascotaEdit}">
-        // Le damos un pequeñísimo retraso (100ms) para asegurar que el navegador 
-        // haya terminado de dibujar todo el HTML del Dashboard antes de intentar abrir el modal
-        setTimeout(function() {
-            var miModal = new bootstrap.Modal(document.getElementById('modalMascota'));
-            miModal.show();
-        }, 100);
     </c:if>
 </script>
 

@@ -22,7 +22,7 @@ public class AporteMonetarioServlet extends HttpServlet {
 
         // Seguridad: Solo permitimos al Administrador (1) y Usuario Común (4)
         if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 4)) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/inicio");
             return;
         }
 

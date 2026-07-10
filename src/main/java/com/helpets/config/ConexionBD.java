@@ -9,11 +9,21 @@ import org.slf4j.LoggerFactory;
 
 public class ConexionBD {
     private static final Logger logger = LoggerFactory.getLogger(ConexionBD.class);
-    // 1. Configura tus credenciales (Asegúrate de que el nombre de la BD coincida con el tuyo)
-    private static final String URL = "jdbc:mysql://db:3306/helpets_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-    private static final String USUARIO = "root"; 
-    private static final String PASSWORD = "123456"; 
+    // 1. Configuracion de credenciales
+    private static final String URL = requireEnv("DB_URL");
+    private static final String USUARIO = requireEnv("DB_USER");
+    private static final String PASSWORD = requireEnv("DB_PASSWORD");
 
+    private static String requireEnv(String nombre) {
+        String valor = System.getenv(nombre);
+
+        if (valor == null || valor.isBlank()) {
+            throw new IllegalStateException("Falta configurar la variable de entorno: " + nombre);
+        }
+
+        return valor;
+    }
+    
     // 2. Método para obtener la conexión
     public static Connection getConexion() {
         Connection conexion = null;

@@ -23,3 +23,6 @@ nbactions.xml
 # Archivos del Sistema Operativo
 .DS_Store
 Thumbs.db
+
+# Variables de entorno
+.env

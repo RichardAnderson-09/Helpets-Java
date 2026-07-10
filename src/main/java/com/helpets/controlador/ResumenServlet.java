@@ -23,7 +23,7 @@ public class ResumenServlet extends HttpServlet {
         // Seguridad: Solo permitimos el acceso a personal (Roles 1, 2 y 3).
         // El usuario común (Rol 4) no debería ver este panel administrativo.
         if (usuarioActivo == null || usuarioActivo.getIdrol() == 4) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/inicio");
             return;
         }
 

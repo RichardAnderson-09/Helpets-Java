@@ -76,8 +76,14 @@ public class Adopcion {
         boolean exito = dao.ejecutarModificacion(sql, this.estado_solicitud, this.comentarios, this.idadopcion);
         
         // Si el estado es 'Aprobado', actualizamos la mascota a NO disponible (0)
-        if (exito && "A".equals(this.estado_solicitud)) {
-            String sqlMascota = "UPDATE mascotas SET disponibilidad = '0' WHERE idmascota = (SELECT idmascota FROM adopciones WHERE idadopcion = ?)";
+        if (exito) {
+            String sqlMascota;
+
+            if ("A".equals(this.estado_solicitud)) {
+                sqlMascota = "UPDATE mascotas SET disponibilidad = '0' WHERE idmascota = (SELECT idmascota FROM adopciones WHERE idadopcion = ?)";
+            } else {
+                sqlMascota = "UPDATE mascotas SET disponibilidad = '1' WHERE idmascota = (SELECT idmascota FROM adopciones WHERE idadopcion = ?)";
+            }
             dao.ejecutarModificacion(sqlMascota, this.idadopcion);
         }
         

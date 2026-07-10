@@ -107,10 +107,10 @@ public class Mascota {
         return exito;
     }
 
-    // Método para ELIMINAR (DELETE)
+    // Método para ELIMINAR (ELIMINACION LOGICA)
     public static boolean eliminarMascota(int id) {
         GestorDAO dao = new GestorDAO();
-        String sql = "DELETE FROM mascotas WHERE idmascota = ?";
+        String sql = "UPDATE mascotas SET vive = 'N', disponibilidad = '0' WHERE idmascota = ?";
         boolean exito = dao.ejecutarModificacion(sql, id);
         dao.cerrarConexion();
         return exito;
@@ -124,7 +124,7 @@ public class Mascota {
                      "FROM mascotas m " +
                      "INNER JOIN razas r ON m.idraza = r.idraza " +
                      "INNER JOIN especies e ON r.idespecie = e.idespecie " +
-                     "WHERE m.disponibilidad = '1' ORDER BY m.nombre ASC"; 
+                     "WHERE m.disponibilidad = '1' AND m.vive = 'S' ORDER BY m.nombre ASC"; 
         ResultSet rs = dao.ejecutarSelect(sql);
         try {
             while (rs != null && rs.next()) {
@@ -148,7 +148,7 @@ public class Mascota {
                      "FROM mascotas m " +
                      "INNER JOIN razas r ON m.idraza = r.idraza " +
                      "INNER JOIN especies e ON r.idespecie = e.idespecie " +
-                     "WHERE m.disponibilidad = '1' AND e.idespecie = ? " +
+                     "WHERE m.disponibilidad = '1' AND m.vive = 'S' AND e.idespecie = ? " +
                      "ORDER BY m.nombre ASC"; 
         java.sql.ResultSet rs = dao.ejecutarSelect(sql, idEspecie);
         try {

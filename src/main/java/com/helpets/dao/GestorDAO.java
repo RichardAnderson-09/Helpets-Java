@@ -30,14 +30,13 @@ public class GestorDAO {
 
     // Método genérico para INSERT, UPDATE, DELETE
     public boolean ejecutarModificacion(String sql, Object... params) {
-        try {
-            PreparedStatement ps = conexion.prepareStatement(sql);
+       try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {
                 ps.setObject(i + 1, params[i]);
             }
             int filasAfectadas = ps.executeUpdate();
             return filasAfectadas > 0;
-        } catch (SQLException e) {
+        }catch (SQLException e) {
             System.err.println("Error en modificación: " + e.getMessage());
             return false;
         }
