@@ -9,6 +9,7 @@ import java.util.List;
 public class Mascota {
     private int idmascota;
     private int idraza;
+    private int idespecie;
     private String nombre;
     private Date fecharescate;
     private String disponibilidad;
@@ -68,7 +69,7 @@ public class Mascota {
     // Método para BUSCAR una sola mascota por su ID (para cargar el formulario de edición)
     public static Mascota buscarPorId(int id) {
         GestorDAO dao = new GestorDAO();
-        String sql = "SELECT m.*, e.nombre_especie, r.nombre_raza " +
+        String sql = "SELECT m.*, e.idespecie, e.nombre_especie, r.nombre_raza " +
                      "FROM mascotas m " +
                      "INNER JOIN razas r ON m.idraza = r.idraza " +
                      "INNER JOIN especies e ON r.idespecie = e.idespecie " +
@@ -80,6 +81,7 @@ public class Mascota {
                 Mascota m = new Mascota();
                 m.setIdmascota(rs.getInt("idmascota"));
                 m.setIdraza(rs.getInt("idraza"));
+                m.setIdespecie(rs.getInt("idespecie"));
                 m.setNombre(rs.getString("nombre"));
                 m.setNombreEspecie(rs.getString("nombre_especie"));
                 m.setNombreRaza(rs.getString("nombre_raza"));
@@ -107,7 +109,7 @@ public class Mascota {
         return exito;
     }
 
-    // Método para ELIMINAR (ELIMINACION LOGICA)
+    // Método para ELIMINAR (ELIMINACION LOGICA) | NO SE USA
     public static boolean eliminarMascota(int id) {
         GestorDAO dao = new GestorDAO();
         String sql = "UPDATE mascotas SET vive = 'N', disponibilidad = '0' WHERE idmascota = ?";
@@ -211,6 +213,8 @@ public class Mascota {
     public void setIdmascota(int idmascota) { this.idmascota = idmascota; }
     public int getIdraza() { return idraza; }
     public void setIdraza(int idraza) { this.idraza = idraza; }
+    public int getIdespecie() { return idespecie; }
+    public void setIdespecie(int idespecie) { this.idespecie = idespecie; }
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
     public Date getFecharescate() { return fecharescate; }

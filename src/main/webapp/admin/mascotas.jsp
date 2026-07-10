@@ -10,7 +10,7 @@
             <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
         </a>
     
-        <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalMascota">
+        <button id="btnRegistrarMascota" type="button" class="btn btn-primary shadow-sm">
             <i class="bi bi-plus-circle"></i> Registrar Mascota
         </button>
     </div>
@@ -56,9 +56,9 @@
                                 <i class="bi bi-pencil-square"></i>
                             </a>
 
-                            <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="confirmarEliminacion(${m.idmascota})">
+                            <!-- <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="confirmarEliminacion(${m.idmascota})">
                                 <i class="bi bi-trash"></i>
-                            </button>
+                            </button> -->
                         </td>
                     </tr>
                     </c:forEach>
@@ -74,8 +74,15 @@
         <div class="modal-content">
 
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">
-                    <i class="bi bi-plus-circle"></i> Registrar Mascota
+                <h5 class="modal-title" id="tituloModalMascota">
+                    <c:choose>
+                        <c:when test="${not empty mascotaEdit}">
+                            <i class="bi bi-pencil-square"></i> Actualizar Mascota
+                        </c:when>
+                        <c:otherwise>
+                            <i class="bi bi-plus-circle"></i> Registrar Mascota
+                        </c:otherwise>
+                    </c:choose>
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -93,7 +100,9 @@
                             <select id="especieSelect" class="form-control" onchange="cargarRazas()" required>
                                 <option value="">Seleccione una especie</option>
                                 <c:forEach var="e" items="${listaEspecies}">
-                                    <option value="${e.idespecie}">${e.nombreEspecie}</option>
+                                    <option value="${e.idespecie}" ${mascotaEdit.idespecie == e.idespecie ? 'selected' : ''}>
+                                        ${e.nombreEspecie}
+                                    </option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -163,8 +172,15 @@
                         Cancelar
                     </button>
 
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-save"></i> Guardar
+                    <button type="submit" class="btn btn-primary" id="btnGuardarMascota">
+                        <c:choose>
+                            <c:when test="${not empty mascotaEdit}">
+                                <i class="bi bi-save"></i> Actualizar
+                            </c:when>
+                            <c:otherwise>
+                                <i class="bi bi-save"></i> Guardar
+                            </c:otherwise>
+                        </c:choose>
                     </button>
                 </div>
 
@@ -198,10 +214,14 @@
     
     
     document.getElementById("formRegistroMascota").addEventListener("submit", function(event) {
-        // El navegador ya validó los campos vacíos gracias a los 'required'.
-        // Ahora lanzamos la pregunta:
-        var confirmacion = confirm("¿Estás seguro de registrar esta nueva mascota en el sistema?");
-        
+       var idMascota = document.querySelector("input[name='idmascota']").value;
+
+        var mensaje = idMascota
+            ? "¿Estás seguro de actualizar los datos de esta mascota?"
+            : "¿Estás seguro de registrar esta nueva mascota en el sistema?";
+
+        var confirmacion = confirm(mensaje);
+
         // Si el usuario cancela, detenemos el envío al Servlet
         if (!confirmacion) {
             event.preventDefault();
@@ -218,9 +238,43 @@
         }
     }
     
+    document.getElementById("btnRegistrarMascota").addEventListener("click", function() {
+        var form = document.getElementById("formRegistroMascota");
+
+        form.reset();
+
+        form.querySelector("input[name='idmascota']").value = "";
+        form.querySelector("input[name='fotoActual']").value = "";
+        form.querySelector("input[name='nombre']").value = "";
+        form.querySelector("input[name='fecharescate']").value = "";
+        form.querySelector("input[name='foto']").value = "";
+
+        document.getElementById("especieSelect").value = "";
+        document.getElementById("razaSelect").innerHTML = "<option value=''>Primero seleccione una especie</option>";
+
+        document.querySelector("select[name='disponibilidad']").value = "1";
+        document.querySelector("select[name='sexo']").value = "";
+
+        document.getElementById("tituloModalMascota").innerHTML =
+            '<i class="bi bi-plus-circle"></i> Registrar Mascota';
+
+        document.getElementById("btnGuardarMascota").innerHTML =
+            '<i class="bi bi-save"></i> Guardar';
+
+        var modalElement = document.getElementById("modalMascota");
+        var modalRegistro = bootstrap.Modal.getOrCreateInstance(modalElement);
+        modalRegistro.show();
+    });
+
     // Espera a que la página cargue y abre el modal
    <c:if test="${not empty mascotaEdit}">
         window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById("tituloModalMascota").innerHTML =
+                '<i class="bi bi-pencil-square"></i> Actualizar Mascota';
+
+            document.getElementById("btnGuardarMascota").innerHTML =
+                '<i class="bi bi-save"></i> Actualizar';
+
             var modalElement = document.getElementById('modalMascota');
             var modalRegistro = bootstrap.Modal.getOrCreateInstance(modalElement);
             modalRegistro.show();
