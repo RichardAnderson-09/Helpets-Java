@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -29,6 +30,21 @@
     </nav>
 
     <div class="container mt-5">
+        <c:if test="${not empty mensajeExito}">
+            <div class="alert alert-success alert-dismissible fade show text-center fw-bold shadow-sm" role="alert">
+                <i class="bi bi-check-circle-fill"></i> ${mensajeExito}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <c:remove var="mensajeExito" scope="session" />
+        </c:if>
+
+        <c:if test="${not empty errorRegistro}">
+            <div class="alert alert-danger alert-dismissible fade show text-center fw-bold shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i> ${errorRegistro}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <c:remove var="errorRegistro" scope="session" />
+        </c:if>
         <div class="text-center mb-5">
             <h1 class="display-4 fw-bold text-dark">¡Encuentra a tu nuevo mejor amigo!</h1>
             <p class="lead text-muted">Explora nuestro catálogo de peluditos esperando un hogar lleno de amor.</p>
@@ -36,7 +52,6 @@
         
         <div class="row mt-5 p-5 bg-white border rounded shadow-sm text-center">
             <div class="col text-muted">
-                <%@ taglib uri="jakarta.tags.core" prefix="c" %>
                 <div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
                     <c:forEach var="m" items="${listaCatalogo}">
                         <div class="col">
@@ -169,7 +184,30 @@
                                 <label class="form-label text-muted fw-bold">Fecha de Nacimiento</label>
                                 <input type="date" name="fechanac" class="form-control">
                             </div>
-
+                            <div class="col-md-4">
+                                <label class="form-label text-muted fw-bold">Departamento</label>
+                                <select id="cboDepartamento" class="form-select" required>
+                                    <option value="">Seleccione...</option>
+                                    <c:forEach var="dep" items="${listaDepartamentos}">
+                                        <option value="${dep.iddepartamento}">${dep.departamento}</option>
+                                    </c:forEach>
+                                    
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-muted fw-bold">Provincia</label>
+                                <select id="cboProvincia" class="form-select" required disabled>
+                                    <option value="">Seleccione...</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label class="form-label text-muted fw-bold">Distrito</label>
+                                <select id="cboDistrito" name="iddistrito" class="form-select" required disabled>
+                                    <option value="">Seleccione...</option>
+                                </select>
+                            </div>
+                            
                             <h6 class="text-muted border-bottom pb-2 mt-4 mb-3">Datos de Acceso</h6>
                             <div class="col-md-6">
                                 <label class="form-label text-muted fw-bold">Usuario</label>
@@ -199,3 +237,61 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cboDep = document.getElementById('cboDepartamento');
+        const cboProv = document.getElementById('cboProvincia');
+        const cboDist = document.getElementById('cboDistrito');
+
+        // Cuando se cambia al Departamento
+        cboDep.addEventListener('change', function() {
+            const idDep = this.value;
+
+            // Limpiamos y bloqueamos los siguientes combos
+            cboProv.innerHTML = '<option value="">Seleccione...</option>';
+            cboDist.innerHTML = '<option value="">Seleccione...</option>';
+            cboProv.disabled = true;
+            cboDist.disabled = true;
+
+            if (idDep) {
+                // Hacemos la petición al Servlet que crearemos
+                fetch('${pageContext.request.contextPath}/UbigeoServlet?accion=provincias&iddepartamento=' + idDep)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value = p.id;
+                        opt.textContent = p.nombre;
+                        cboProv.appendChild(opt);
+                    });
+                    cboProv.disabled = false; // Habilitamos la provincia
+                })
+                .catch(err => console.error("Error cargando provincias:", err));
+            }
+        });
+
+        // Cuando cambia la Provincia
+        cboProv.addEventListener('change', function() {
+            const idProv = this.value;
+
+            cboDist.innerHTML = '<option value="">Seleccione...</option>';
+            cboDist.disabled = true;
+
+            if (idProv) {
+                fetch('${pageContext.request.contextPath}/UbigeoServlet?accion=distritos&idprovincia=' + idProv)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(d => {
+                        const opt = document.createElement('option');
+                        opt.value = d.id;
+                        opt.textContent = d.nombre;
+                        cboDist.appendChild(opt);
+                    });
+                    cboDist.disabled = false; // Habilitamos el distrito
+                })
+                .catch(err => console.error("Error cargando distritos:", err));
+            }
+        });
+    });
+</script>

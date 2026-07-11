@@ -19,7 +19,7 @@ public class Donacion {
     private String tipodonacion;
     private double monto;
     
-    // Campos para la tabla detalle_donacion (Asumimos 1 producto por donación en este formulario)
+    // Campos para la tabla detalle_donacion
     private int idproducto;
     private int cantidad;
     
@@ -36,10 +36,10 @@ public class Donacion {
         boolean exito = false;
         
         try {
-            // Iniciamos la transacción manual (evita que se guarde a medias si hay error)
+            // Iniciamos la transacción manual (evita que se guarde a medias si hay error)<
             con.setAutoCommit(false);
             
-            // PASO 1: Insertar la Donación (Cabecera)
+            // Insertar la Donación (Cabecera)
             String sqlDonacion = "INSERT INTO donaciones (idusuario, idpersona, fechadonacion, tipodonacion) VALUES (?, ?, ?, ?)";
             PreparedStatement psDonacion = con.prepareStatement(sqlDonacion, Statement.RETURN_GENERATED_KEYS);
             psDonacion.setInt(1, this.idusuario);
@@ -56,7 +56,7 @@ public class Donacion {
             }
             
             if (idDonacionGenerado > 0) {
-                // PASO 2: Insertar el Detalle de la donación
+                // Insertar el Detalle de la donación
                 String sqlDetalle = "INSERT INTO detalle_donacion (iddonacion, idproducto, cantidad) VALUES (?, ?, ?)";
                 PreparedStatement psDetalle = con.prepareStatement(sqlDetalle);
                 psDetalle.setInt(1, idDonacionGenerado);
@@ -64,7 +64,7 @@ public class Donacion {
                 psDetalle.setInt(3, this.cantidad);
                 psDetalle.executeUpdate();
                 
-                // PASO 3: Actualizar el Stock del Producto sumando la cantidad donada
+                // Actualizar el Stock del Producto sumando la cantidad donada
                 String sqlStock = "UPDATE productos SET stock = stock + ? WHERE idproducto = ?";
                 PreparedStatement psStock = con.prepareStatement(sqlStock);
                 psStock.setInt(1, this.cantidad);
@@ -88,7 +88,7 @@ public class Donacion {
         return exito;
     }
 
-    // 2. Método para listar el historial de donaciones en la tabla del Dashboard
+    // Método para listar el historial de donaciones en la tabla del Dashboard
     public static List<Donacion> listarDonaciones() {
         List<Donacion> lista = new ArrayList<>();
         GestorDAO dao = new GestorDAO();
@@ -133,7 +133,7 @@ public class Donacion {
         try {
             con.setAutoCommit(false);
             
-            // PASO 1: Cabecera de la donación (idusuario e idpersona son el mismo en este caso)
+            // Cabecera de la donación (idusuario e idpersona son el mismo en este caso)
             String sqlDonacion = "INSERT INTO donaciones (idusuario, idpersona, fechadonacion, tipodonacion) VALUES (?, ?, NOW(), 'MONETARIA')";
             PreparedStatement psDonacion = con.prepareStatement(sqlDonacion, Statement.RETURN_GENERATED_KEYS);
             psDonacion.setInt(1, this.idusuario);
@@ -147,7 +147,7 @@ public class Donacion {
             }
             
             if (idDonacionGenerado > 0) {
-                // PASO 2: Detalle de la donación (idproducto y cantidad van como NULL, solo va el monto)
+                // Detalle de la donación (idproducto y cantidad van como NULL, solo va el monto)
                 String sqlDetalle = "INSERT INTO detalle_donacion (iddonacion, idproducto, cantidad, monto) VALUES (?, NULL, NULL, ?)";
                 PreparedStatement psDetalle = con.prepareStatement(sqlDetalle);
                 psDetalle.setInt(1, idDonacionGenerado);

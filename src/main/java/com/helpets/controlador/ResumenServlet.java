@@ -20,26 +20,26 @@ public class ResumenServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
 
-        // 1. Seguridad: Solo permitimos el acceso a personal (Roles 1, 2 y 3).
+        // Seguridad: Solo permitimos el acceso a personal (Roles 1, 2 y 3).
         // El usuario común (Rol 4) no debería ver este panel administrativo.
         if (usuarioActivo == null || usuarioActivo.getIdrol() == 4) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/inicio");
             return;
         }
 
         try {
-            // 2. Instanciar el modelo y realizar las consultas a la base de datos
+            // Instanciar el modelo y realizar las consultas a la base de datos
             ResumenDashboard dashboard = new ResumenDashboard();
             dashboard.cargarEstadisticas();
 
-            // 3. Enviar el objeto resultante a la vista (resumen.jsp)
+            // Enviar el objeto resultante a la vista (resumen.jsp)
             request.setAttribute("resumen", dashboard);
 
         } catch (Exception e) {
             System.err.println("Error en ResumenServlet: " + e.getMessage());
         }
 
-        // 4. Redirigir al contenedor principal indicando que cargue la vista de resumen
+        // Redirigir al contenedor principal indicando que cargue la vista de resumen
         request.getRequestDispatcher("/admin/dashboard.jsp?view=resumen").forward(request, response);
     }
 

@@ -23,7 +23,7 @@ public class CatalogoMascotasServlet extends HttpServlet {
 
         // Seguridad: Solo Admin (1) o Usuario Común (4)
         if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 4)) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/inicio");
             return;
         }
 

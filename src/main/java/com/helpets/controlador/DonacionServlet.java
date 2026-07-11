@@ -23,15 +23,15 @@ public class DonacionServlet extends HttpServlet {
         Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
 
         if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/inicio");
             return;
         }
         
-        // 1. Cargar las listas desde la base de datos para mostrarlas en la vista
+        // Cargar las listas desde la base de datos para mostrarlas en la vista
         request.setAttribute("listaDonaciones", Donacion.listarDonaciones());
         request.setAttribute("listaProductos", Producto.listarProductos());
         
-        // 2. Redirigir al Dashboard apuntando a la vista de donaciones
+        // Redirigir al Dashboard apuntando a la vista de donaciones
         request.getRequestDispatcher("/admin/dashboard.jsp?view=donaciones").forward(request, response);
     }
 
@@ -43,7 +43,7 @@ public class DonacionServlet extends HttpServlet {
         Usuario usuarioActivo = (Usuario) session.getAttribute("usuarioActivo");
 
         if (usuarioActivo == null || (usuarioActivo.getIdrol() != 1 && usuarioActivo.getIdrol() != 2)) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/inicio");
             return;
         }
                 
@@ -75,7 +75,7 @@ public class DonacionServlet extends HttpServlet {
             }
             
             if ("registrar".equals(accion)) {
-                // 1. Armamos el objeto Persona (El Donante)
+                // Armamos el objeto Persona (El Donante)
                 Persona p = new Persona();
                 p.setTipodoc(request.getParameter("tipodoc"));
                 p.setNrodoc(request.getParameter("nrodoc"));
@@ -91,10 +91,10 @@ public class DonacionServlet extends HttpServlet {
                 int idPersona = p.registrarYObtenerId();
                 
                 if (idPersona != -1) {
-                    // 2. Recuperamos quién está registrando la donación (El empleado/admin)
+                    // Recuperamos quién está registrando la donación (El empleado/admin)
                     Usuario usuarioLogueado = (Usuario) request.getSession().getAttribute("usuarioActivo");
                     
-                    // 3. Armamos la Donación y el Detalle
+                    // Armamos la Donación y el Detalle
                     Donacion d = new Donacion();
                     d.setIdusuario(usuarioLogueado.getIdusuario()); // Quien registra en el sistema
                     d.setIdpersona(idPersona); // El donante
@@ -104,17 +104,16 @@ public class DonacionServlet extends HttpServlet {
                     d.setIdproducto(Integer.parseInt(request.getParameter("idproducto")));
                     d.setCantidad(Integer.parseInt(request.getParameter("cantidad")));
                     
-                    // 4. Ejecutamos la transacción Maestro-Detalle
+                    // Ejecutamos la transacción Maestro-Detalle
                     d.registrarDonacionMaterial();
                 }
             }
             
         } catch (Exception e) {
-            // En el futuro puedes cambiar esto por tu Logback (logger.error)
             System.err.println("Error al procesar el formulario de donación: " + e.getMessage());
         }
         
-        // 5. Redirigir nuevamente usando el patrón PRG (Post-Redirect-Get) para limpiar la URL
+        // Redirigir nuevamente usando el patrón PRG (Post-Redirect-Get) para limpiar la URL
         response.sendRedirect(request.getContextPath() + "/DonacionServlet");
     }
 }

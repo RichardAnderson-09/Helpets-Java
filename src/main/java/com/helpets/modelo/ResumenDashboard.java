@@ -8,9 +8,9 @@ import java.util.Map;
 public class ResumenDashboard {
     // KPI's Generales
     private int solicitudesPendientes;
-    private int adopcionesConcretadas; // NUEVO INDICADOR
+    private int adopcionesConcretadas; 
     
-    // Mapa dinámico para las especies (Ej: "Perro" -> 12, "Gato" -> 8, "Loro" -> 2)
+    // Mapa dinámico para las especies 
     private Map<String, Integer> disponiblesPorEspecie;
     
     // Datos para Chart.js
@@ -26,7 +26,7 @@ public class ResumenDashboard {
     public void cargarEstadisticas() {
         GestorDAO dao = new GestorDAO();
         try {
-            // 1. Mascotas Disponibles Agrupadas por Especie (Dinámico)
+            // 1. Mascotas Disponibles Agrupadas por Especie 
             String sqlEspecies = "SELECT e.nombre_especie, COUNT(m.idmascota) as total " +
                                  "FROM mascotas m " +
                                  "INNER JOIN razas r ON m.idraza = r.idraza " +
@@ -38,12 +38,12 @@ public class ResumenDashboard {
                 disponiblesPorEspecie.put(rs1.getString("nombre_especie"), rs1.getInt("total"));
             }
 
-            // 2. Solicitudes Pendientes (estado_solicitud = 'P')
+            // Solicitudes Pendientes (estado_solicitud = 'P')
             String sqlAdopPendientes = "SELECT COUNT(*) AS total FROM adopciones WHERE estado_solicitud = 'P'";
             ResultSet rs2 = dao.ejecutarSelect(sqlAdopPendientes);
             if (rs2 != null && rs2.next()) this.solicitudesPendientes = rs2.getInt("total");
 
-            // 3. NUEVO KPI: Adopciones Concretadas (estado_solicitud = 'A')
+            // Adopciones Concretadas (estado_solicitud = 'A')
             String sqlAdopAprobadas = "SELECT COUNT(*) AS total FROM adopciones WHERE estado_solicitud = 'A'";
             ResultSet rs3 = dao.ejecutarSelect(sqlAdopAprobadas);
             if (rs3 != null && rs3.next()) this.adopcionesConcretadas = rs3.getInt("total");
@@ -65,7 +65,7 @@ public class ResumenDashboard {
             this.mesesIngresos = mesesStr.length() > 0 ? mesesStr.toString() : "'Sin Datos'";
             this.datosIngresos = datosStr.length() > 0 ? datosStr.toString() : "0";
 
-            // 5. Gráfico 2: Distribución por Estados Reales
+            // Gráfico 2: Distribución por Estados Reales
             // Calculamos el estado basado en 'disponibilidad' y 'vive'
             String sqlEstados = "SELECT " +
                                 "CASE " +

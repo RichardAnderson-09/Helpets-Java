@@ -18,8 +18,7 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        // 1. Capturar lo que ingresa el usuario en el HTML
-        // IMPORTANTE: Asegúrate que tus <input> en login.jsp tengan name="usuario" y name="password"
+        // Capturar lo que ingresa el usuario en el HTML
         String userParam = request.getParameter("usuario");
         String passParam = request.getParameter("password");
         
@@ -32,10 +31,10 @@ public class LoginServlet extends HttpServlet {
         }
         
         
-        // 2. Encriptar la contraseña a SHA-256 para que coincida con la base de datos
+        // Encriptar la contraseña a SHA-256 para que coincida con la base de datos
         String hashPassword = Encriptador.encriptarSHA256(passParam);
         
-        // 3. Validar con la base de datos
+        // Validar con la base de datos
         Usuario usuarioLogueado = Usuario.validarLogin(userParam, hashPassword);
         
         if (usuarioLogueado != null) {
@@ -50,7 +49,7 @@ public class LoginServlet extends HttpServlet {
                 // Admin o Voluntario van al Resumen general
                 response.sendRedirect(request.getContextPath() + "/ResumenServlet");
             } else if (rol == 4) {
-                // Usuario común va directo a su vista permitida (Ej. el catálogo a desarrollar)
+                // Usuario común va directo a su vista permitida
                 response.sendRedirect(request.getContextPath() + "/CatalogoMascotasServlet"); 
             } else if (rol == 3) {
                 // Veterinario van a la vista permitida
