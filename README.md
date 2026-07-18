@@ -1,83 +1,312 @@
-# 🐾 HELPETS - Sistema de Gestión para Refugio de Animales
+# HELPETS - Sistema de Gestion para Refugio de Animales
 
-![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
-![Jakarta EE](https://img.shields.io/badge/Jakarta_EE-EE0000?style=for-the-badge&logo=jakartaee&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
+HELPETS es una aplicacion web desarrollada en Java con Jakarta EE, JSP, Servlets, Maven, MySQL y Docker. El sistema permite gestionar las operaciones principales de un refugio de animales: mascotas, adopciones, donaciones, compras, inventario, usuarios, voluntarios y procesos veterinarios.
 
-**HELPETS** es una aplicación web robusta desarrollada en **Java (Jakarta EE)** diseñada para optimizar y digitalizar las operaciones del refugio de animales "Patitas del Sur". El sistema permite administrar de forma integral el catálogo de mascotas, el seguimiento de solicitudes de adopción, la recepción de donaciones y el registro de compras, manteniendo un control automatizado del inventario.
+El proyecto aplica una arquitectura MVC, separando vistas JSP, controladores Servlet, modelos de dominio y una capa DAO para el acceso a datos.
 
-## ✨ Características Principales (Módulos)
+## Tecnologias Utilizadas
 
-* **🐶 Gestión de Mascotas:** Registro, edición, eliminación y listado de mascotas. Soporte para carga de imágenes y exportación del catálogo completo a **Excel (.xlsx)** usando Apache POI.
-* **🏡 Sistema de Adopciones:** Flujo completo de adopción con búsqueda asíncrona (AJAX) de adoptantes por documento, asignación de mascotas disponibles y gestión de la solicitud por etapas (Pendiente, Entrevista, Aprobado, Rechazado).
-* **🎁 Módulo de Donaciones:** Registro de donantes y aportes materiales. Implementa un modelo transaccional (Maestro-Detalle) que actualiza automáticamente el stock de los productos.
-* **🛒 Compras y Suministros:** Control de abastecimiento del refugio. Creación rápida de nuevos productos y registro de facturas que alimentan el inventario general.
-* **📊 Dashboard y Reportes:** Panel de control principal con indicadores clave de rendimiento (KPIs) y gráficos estadísticos interactivos (Chart.js).
-* **🔐 Seguridad y Accesos:** Sistema de Login validado, encriptación de contraseñas mediante **SHA-256**, protección de rutas y prevención de inyecciones SQL (`PreparedStatement`). Logs estructurados con **Logback**.
+- Java 17
+- Jakarta EE
+- JSP y Servlets
+- Maven
+- MySQL 8.4
+- Docker y Docker Compose
+- Apache Tomcat
+- JUnit 5
+- JaCoCo
+- OWASP Dependency Check
+- Prometheus
+- Grafana
+- Logback
+- Apache POI
+- Apache Commons Lang
 
-## 🛠️ Tecnologías y Arquitectura
+## Modulos Principales
 
-El proyecto está construido bajo el patrón **MVC (Modelo-Vista-Controlador)** y aplica principios **SOLID** y el patrón **DAO**.
+- Gestion de mascotas.
+- Catalogo de mascotas disponibles.
+- Solicitudes de adopcion.
+- Gestion de donaciones.
+- Registro de compras.
+- Control de inventario.
+- Gestion de usuarios.
+- Gestion de voluntarios.
+- Modulo veterinario.
+- Dashboard administrativo.
+- Login y control de sesion.
+- Endpoint de metricas para monitoreo.
 
-**Backend:**
-* Java 17
-* Jakarta EE 11 (Servlets, JSP)
-* Maven (Gestor de dependencias)
-* Librerías: Apache POI, Logback, Apache Commons Lang3
+## Estructura Del Proyecto
 
-**Frontend:**
-* HTML5, CSS3, JavaScript (Fetch API)
-* Bootstrap 5 + Bootstrap Icons
-* Chart.js & Tom-Select
-
-**Base de Datos:**
-* MySQL 8.0+ (Conector MySQL/J)
-
-## 🚀 Instalación y Configuración Local
-
-1. **Clonar el repositorio:**
-```bash
-   git clone https://github.com/TU-USUARIO/helpets-java.git
-```
-
-2. **Base de Datos:**
-   - Crea una base de datos en MySQL llamada `helpets_database`.
-   - Importa el script SQL provisto en la carpeta del proyecto.
-
-3. **Configurar Credenciales:**
-   - Edita el archivo `src/main/java/com/helpets/config/ConexionBD.java`.
-   - Actualiza las constantes `USUARIO` y `PASSWORD` con las tuyas:
-```java
-   private static final String USUARIO = "root";
-   private static final String PASSWORD = "tu_password";
-```
-
-4. **Despliegue:**
-   - Abre el proyecto en tu IDE (NetBeans, Eclipse, IntelliJ).
-   - Ejecuta **Clean and Build** con Maven.
-   - Despliega en **Apache Tomcat 10/11**.
-
-5. **Acceso:**
-   - Navega a `http://localhost:8080/helpetsWeb`.
-   - Inicia sesión con las credenciales de administrador de prueba.
-
-## 📁 Estructura del Proyecto
-
-```plaintext
+```text
 Helpets-Java/
-├── src/main/java/com/helpets/
-│   ├── config/          # Conexión a BD, Encriptador
-│   ├── controlador/     # Servlets (AdopcionServlet, MascotaServlet, etc.)
-│   ├── dao/             # GestorDAO para la ejecución de Querys
-│   └── modelo/          # Clases Java (Mascota, Donacion, Usuario, etc.)
-├── src/main/webapp/
-│   ├── admin/           # Vistas protegidas del panel de control (JSP)
-│   ├── assets/img/      # Directorio de almacenamiento de fotografías
-│   └── index.jsp        # Landing page y Login
-└── pom.xml              # Archivo de configuración de Maven
+|-- bd/
+|   |-- Base_de_datos.sql
+|   `-- backup.sql
+|-- docs/
+|   |-- 01-testing.md
+|   |-- 02-pruebas-seguridad.md
+|   |-- 03-despliegue.md
+|   |-- 04-monitoreo.md
+|   `-- 05-mantenimiento.md
+|-- monitoring/
+|   `-- prometheus.yml
+|-- src/
+|   |-- main/
+|   |   |-- java/com/helpets/
+|   |   |   |-- config/
+|   |   |   |-- controlador/
+|   |   |   |-- dao/
+|   |   |   `-- modelo/
+|   |   |-- resources/
+|   |   `-- webapp/
+|   `-- test/
+|       `-- java/com/helpets/
+|-- Dockerfile
+|-- docker-compose.yml
+|-- dev.Dockerfile
+|-- dev.docker-compose.yml
+|-- pom.xml
+`-- README.md
 ```
 
----
+## Configuracion Del Entorno
 
-Desarrollado para la gestión y bienestar de nuestros amigos de cuatro patas. 🐾
+El proyecto utiliza variables de entorno para evitar exponer credenciales en el codigo fuente.
+
+Crea un archivo `.env` tomando como referencia `.env.example`:
+
+```env
+MYSQL_DATABASE=helpets_db
+MYSQL_ROOT_PASSWORD=cambia_esto
+MYSQL_PORT=3306
+APP_PORT=8080
+
+DB_URL=jdbc:mysql://db:3306/helpets_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+DB_USER=root
+DB_PASSWORD=cambia_esto
+NVD_API_KEY=tu_api_key_nvd
+```
+
+No subas el archivo `.env` al repositorio.
+
+## Ejecucion Con Docker
+
+Para levantar la aplicacion en modo produccion:
+
+```bash
+docker compose up --build
+```
+
+Para levantar el entorno de desarrollo con monitoreo:
+
+```bash
+docker compose -f dev.docker-compose.yml up --build
+```
+
+Para verificar los contenedores activos:
+
+```bash
+docker ps
+```
+
+La aplicacion queda disponible en el puerto configurado en `APP_PORT`.
+
+Ejemplo:
+
+```text
+http://localhost:8080
+```
+
+## Construccion Del Proyecto
+
+El proyecto se construye con Maven y genera un archivo WAR desplegable en Tomcat.
+
+Comando usando Docker:
+
+```bash
+docker run --rm -v "$(pwd -W)://app" -w //app maven:3.9-eclipse-temurin-17 mvn clean package -DskipTests
+```
+
+Archivo generado:
+
+```text
+target/helpetsWeb-1.0-SNAPSHOT.war
+```
+
+## Pruebas De Software
+
+Se integraron pruebas automatizadas con JUnit 5 y Maven Surefire.
+
+Clases probadas:
+
+- `Encriptador`
+- `Mascota`
+- `Producto`
+- `Usuario`
+
+Comando de ejecucion:
+
+```bash
+docker run --rm -v "$(pwd -W)://app" -w //app maven:3.9-eclipse-temurin-17 mvn clean test
+```
+
+Resultado esperado:
+
+```text
+Tests run: 5
+Failures: 0
+Errors: 0
+Skipped: 0
+BUILD SUCCESS
+```
+
+## Cobertura Con JaCoCo
+
+Se configuro JaCoCo para generar reportes de cobertura de codigo.
+
+Comando:
+
+```bash
+docker run --rm -v "$(pwd -W)://app" -w //app maven:3.9-eclipse-temurin-17 mvn clean test jacoco:report
+```
+
+Reporte generado:
+
+```text
+target/site/jacoco/index.html
+```
+
+La cobertura inicial se concentra en clases unitarias independientes. Como mejora futura, se recomienda ampliar pruebas de integracion para DAOs, Servlets y flujos completos del sistema.
+
+## Pruebas De Seguridad
+
+Se ejecuto OWASP Dependency Check para analizar vulnerabilidades conocidas en dependencias Maven.
+
+Comando usado:
+
+```bash
+docker run --rm -v "$(pwd -W)://app" -w //app -e NVD_API_KEY="$NVD_API_KEY" maven:3.9-eclipse-temurin-17 mvn org.owasp:dependency-check-maven:12.2.2:check -DnvdApiKeyEnvironmentVariable=NVD_API_KEY -DnvdApiDelay=6000 -Dformat=HTML -DfailBuildOnCVSS=11
+```
+
+Reporte generado:
+
+```text
+target/dependency-check-report.html
+```
+
+Buenas practicas aplicadas:
+
+- Uso de `PreparedStatement` para reducir el riesgo de inyeccion SQL.
+- Credenciales gestionadas mediante variables de entorno.
+- Validacion de campos vacios en el login.
+- Hash de contrasenas con SHA-256.
+- Timeout de sesion configurado en `web.xml`.
+
+Observacion de mejora:
+
+- Migrar el hash de contrasenas a BCrypt con salt.
+- Actualizar dependencias vulnerables detectadas por OWASP Dependency Check.
+- Repetir el analisis de seguridad antes de cada despliegue.
+
+## Monitoreo
+
+El entorno de desarrollo incluye monitoreo con Prometheus y Grafana.
+
+Flujo de monitoreo:
+
+```text
+Helpets Java -> /metrics -> Prometheus -> Grafana
+```
+
+Metricas expuestas por la aplicacion:
+
+- `helpets_app_uptime_seconds`
+- `helpets_jvm_memory_used_bytes`
+- `helpets_db_status`
+- `helpets_http_requests_total`
+- `helpets_http_errors_total`
+- `helpets_http_request_duration_avg_ms`
+
+URLs del entorno de monitoreo:
+
+```text
+Metricas: http://localhost:APP_PORT/metrics
+Prometheus: http://localhost:9090
+Grafana: http://localhost:3000
+```
+
+Credenciales iniciales de Grafana:
+
+```text
+Usuario: admin
+Contrasena: admin
+```
+
+Para validar que Prometheus esta leyendo la aplicacion:
+
+```text
+http://localhost:9090/targets
+```
+
+El target `helpets-app` debe aparecer en estado `UP`.
+
+## Mantenimiento
+
+El proyecto incluye un plan de mantenimiento documentado en `docs/05-mantenimiento.md`.
+
+Actividades propuestas:
+
+- Backups periodicos de MySQL.
+- Limpieza de backups antiguos.
+- Revision de logs.
+- Revision de vulnerabilidades.
+- Actualizacion de dependencias.
+- Ejecucion de pruebas antes del despliegue.
+- Verificacion de contenedores con `docker ps`.
+
+Comandos utiles:
+
+```bash
+docker compose logs web
+docker compose logs
+docker ps
+```
+
+Cron jobs propuestos para un servidor Linux:
+
+```bash
+0 2 * * * /ruta-del-proyecto/scripts/backup-db.sh
+0 3 * * 0 /ruta-del-proyecto/scripts/cleanup-backups.sh
+```
+
+## Documentacion Academica
+
+La evidencia del proyecto se encuentra organizada en la carpeta `docs`:
+
+- `01-testing.md`: pruebas unitarias y cobertura JaCoCo.
+- `02-pruebas-seguridad.md`: OWASP Dependency Check y revision manual de buenas practicas.
+- `03-despliegue.md`: despliegue con Maven, Docker, Tomcat y MySQL.
+- `04-monitoreo.md`: Prometheus, Grafana y metricas de la aplicacion.
+- `05-mantenimiento.md`: backups, cron jobs, logs y actualizacion de dependencias.
+
+## Estado Del Proyecto
+
+El proyecto cuenta con:
+
+- Aplicacion web funcional.
+- Construccion con Maven.
+- Despliegue con Docker y Tomcat.
+- Base de datos MySQL dockerizada.
+- Pruebas unitarias con JUnit.
+- Cobertura con JaCoCo.
+- Analisis de seguridad con OWASP Dependency Check.
+- Monitoreo con Prometheus y Grafana.
+- Plan de mantenimiento documentado.
+
+## Autor
+
+Richard Anderson De la Cruz Campos
+
+Proyecto desarrollado para el curso Integrador I: Sistemas Software.
