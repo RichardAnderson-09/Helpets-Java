@@ -308,5 +308,3 @@ El proyecto cuenta con:
 ## Autor
 
 Richard Anderson De la Cruz Campos
-
-Proyecto desarrollado para el curso Integrador I: Sistemas Software.
